@@ -1,32 +1,47 @@
 // app/quote/page.tsx
 import QuoteForm from "./quote-form";
+import { headers } from "next/headers";
 
 type ProductItem = {
   id: string;
   name: string;
 };
 
-async function fetchProducts(): Promise<ProductItem[]> {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL}/api/content/products`,
-    { cache: "no-store" }
-  );
+async function fetchProducts(opts: { id?: string; q?: string } = {}): Promise<ProductItem[]> {
+  const h = headers();
+  const proto = (await h).get("x-forwarded-proto") ?? "http";
+  const host = (await h).get("host") ?? "localhost:3000";
+  const base = `${proto}://${host}`;
+  const params = new URLSearchParams();
+  params.set("fields", "id,name");
+  if (opts.id) {
+    params.set("id", opts.id);
+  } else {
+    params.set("limit", "50");
+    if (opts.q) params.set("q", opts.q);
+  }
+  const res = await fetch(`${base}/api/content/products?${params.toString()}`, { cache: "no-store" });
   if (!res.ok) return [];
   const json = await res.json();
-  return (json.data ?? []).map((p: any) => ({
-    id: p.id,
-    name: p.name,
-  }));
+  return (json.data ?? []).map((p: any) => ({ id: p.id, name: p.name }));
 }
 
 type Props = {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams?: { [key: string]: string | string[] | undefined };
 };
 
 export default async function QuotePage({ searchParams }: Props) {
-  const products = await fetchProducts();
-  const defaultProductId =
-    typeof searchParams.product === "string" ? searchParams.product : undefined;
+  const productParam = searchParams?.product;
+  const defaultProductId = Array.isArray(productParam)
+    ? productParam[0]
+    : typeof productParam === "string"
+    ? productParam
+    : undefined;
+  let products = await fetchProducts(defaultProductId ? { id: defaultProductId } : {});
+  if (defaultProductId && products.every((p) => p.id !== defaultProductId)) {
+    const extra = await fetchProducts({ id: defaultProductId });
+    if (extra.length) products = [extra[0], ...products];
+  }
 
   return (
     <main className="min-h-screen bg-slate-50">

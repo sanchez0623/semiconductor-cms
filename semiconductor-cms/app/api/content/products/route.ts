@@ -1,15 +1,36 @@
 // app/api/content/products/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase/client";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const { data, error } = await supabase
-      .from("products")
-      .select("*")
-      .eq("is_active", true)
-      .order("created_at", { ascending: false });
+    const { searchParams } = new URL(req.url);
 
+    const id = searchParams.get("id");
+    const q = searchParams.get("q");
+    const fields = searchParams.get("fields") ?? "*";
+    const limitRaw = Number(searchParams.get("limit") ?? "50");
+    const limit = Number.isFinite(limitRaw) ? Math.min(Math.max(limitRaw, 1), 200) : 50;
+    const fromRaw = Number(searchParams.get("from") ?? "0");
+    const from = Number.isFinite(fromRaw) && fromRaw >= 0 ? fromRaw : 0;
+    const to = from + limit - 1;
+
+    let query = supabase
+      .from("products")
+      .select(fields)
+      .eq("is_active", true);
+
+    if (id) {
+      query = query.eq("id", id).limit(1);
+    } else {
+      if (q && q.trim().length > 0) {
+        const term = q.trim();
+        query = query.or(`name.ilike.%${term}%,slug.ilike.%${term}%`);
+      }
+      query = query.order("created_at", { ascending: false }).range(from, to);
+    }
+
+    const { data, error } = await query;
     if (error) {
       console.error("Supabase select error (products):", error);
       return NextResponse.json(

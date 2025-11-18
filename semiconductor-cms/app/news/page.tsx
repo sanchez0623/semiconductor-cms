@@ -1,13 +1,17 @@
 // app/news/page.tsx
-type NewsItem = {
+import Link from "next/link";
+
+type NewsListItem = {
   id: string;
   title: string;
   slug: string;
+  content: string | null;
   published_at: string | null;
 };
 
-async function fetchNews(): Promise<NewsItem[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/content/news`, {
+async function fetchNews(): Promise<NewsListItem[]> {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const res = await fetch(`${baseUrl}/api/content/news`, {
     next: { revalidate: 60 },
   });
   if (!res.ok) return [];
@@ -15,42 +19,41 @@ async function fetchNews(): Promise<NewsItem[]> {
   return json.data ?? [];
 }
 
-export default async function NewsListPage() {
+export default async function NewsPage() {
   const news = await fetchNews();
 
   return (
-    <main className="min-h-screen bg-slate-50">
-      <section className="max-w-4xl mx-auto px-4 py-10">
-        <h1 className="text-2xl font-bold tracking-tight mb-2">新闻动态</h1>
-        <p className="text-sm text-slate-600 mb-6">
-          了解公司最新的产品发布、技术更新和行业信息。
-        </p>
+    <main className="max-w-4xl mx-auto px-4 py-10">
+      <h1 className="text-3xl font-bold mb-6">新闻中心</h1>
 
-        {news.length === 0 && (
-          <p className="text-sm text-slate-500">暂无新闻。</p>
-        )}
-
-        <div className="space-y-3">
+      {news.length === 0 ? (
+        <p className="text-slate-500">暂无新闻。</p>
+      ) : (
+        <ul className="space-y-6">
           {news.map((item) => (
-            <a
-              key={item.id}
-              href={`/news/${item.slug}`}
-              className="block bg-white border border-slate-200 rounded-lg px-4 py-3 hover:bg-slate-50"
-            >
-              <div className="flex items-center justify-between gap-4">
-                <h2 className="text-sm font-medium text-slate-900">
+            <li key={item.id} className="border-b border-slate-200 pb-4">
+              <h2 className="text-xl font-semibold mb-1">
+                <Link
+                  href={`/news/${item.slug}`}
+                  className="text-sky-700 hover:underline"
+                >
                   {item.title}
-                </h2>
-                {item.published_at && (
-                  <span className="text-xs text-slate-500">
-                    {new Date(item.published_at).toLocaleDateString("zh-CN")}
-                  </span>
-                )}
-              </div>
-            </a>
+                </Link>
+              </h2>
+              {item.published_at && (
+                <p className="text-xs text-slate-500 mb-2">
+                  {new Date(item.published_at).toLocaleDateString("zh-CN")}
+                </p>
+              )}
+              {item.content && (
+                <p className="text-sm text-slate-600 line-clamp-2">
+                  {item.content}
+                </p>
+              )}
+            </li>
           ))}
-        </div>
-      </section>
+        </ul>
+      )}
     </main>
   );
 }
