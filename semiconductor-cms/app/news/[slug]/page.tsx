@@ -1,5 +1,12 @@
-// app/news/[slug]/page.tsx
+// app/(dashboard)/news/[slug]/page.tsx
 import { notFound } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+
+type PageProps = {
+  params: Promise<{
+    slug: string;
+  }>;
+};
 
 type NewsItem = {
   id: string;
@@ -7,42 +14,52 @@ type NewsItem = {
   slug: string;
   content: string | null;
   published_at: string | null;
-  created_at: string;
+  created_at: string | null;
 };
 
-async function fetchNewsBySlug(slug: string): Promise<NewsItem | null> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  const res = await fetch(`${baseUrl}/api/content/news?slug=${encodeURIComponent(slug)}`, {
-    // 服务端渲染，适度缓存
-    next: { revalidate: 60 },
-  });
+async function getNewsBySlug(slug: string): Promise<NewsItem | null> {
+  const supabase = createClient();
 
-  if (!res.ok) return null;
-  const json = await res.json();
-  return json.data ?? null;
+  const { data, error } = await supabase
+    .from("news")
+    .select("*")
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Error fetching news detail:", error);
+    return null;
+  }
+
+  return data as NewsItem | null;
 }
 
 export default async function NewsDetailPage({
   params,
-}: {
-  params: { slug: string };
-}) {
-  const article = await fetchNewsBySlug(params.slug);
+}: PageProps) {
+  const { slug } = await params;
+  console.log("NewsDetailPage slug =", slug); // 临时调试
+  const item = await getNewsBySlug(slug);
 
-  if (!article) {
+  if (!item) {
     notFound();
   }
 
   return (
     <main className="max-w-3xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-bold mb-3">{article.title}</h1>
-      {article.published_at && (
+      <h1 className="text-3xl font-bold mb-3">{item.title}</h1>
+
+      {(item.published_at || item.created_at) && (
         <p className="text-sm text-slate-500 mb-6">
-          发布于 {new Date(article.published_at).toLocaleDateString("zh-CN")}
+          发布于{" "}
+          {new Date(
+            item.published_at || item.created_at || ""
+          ).toLocaleDateString("zh-CN")}
         </p>
       )}
+
       <article className="prose prose-slate max-w-none">
-        {article.content || "暂无详细内容。"}
+        {item.content || "暂无详细内容。"}
       </article>
     </main>
   );

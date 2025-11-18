@@ -1,7 +1,8 @@
-// app/news/page.tsx
+// app/(dashboard)/news/page.tsx
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 
-type NewsListItem = {
+type NewsItem = {
   id: string;
   title: string;
   slug: string;
@@ -9,18 +10,24 @@ type NewsListItem = {
   published_at: string | null;
 };
 
-async function fetchNews(): Promise<NewsListItem[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  const res = await fetch(`${baseUrl}/api/content/news`, {
-    next: { revalidate: 60 },
-  });
-  if (!res.ok) return [];
-  const json = await res.json();
-  return json.data ?? [];
+async function getNewsList(): Promise<NewsItem[]> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("news")
+    .select("id, title, slug, content, published_at")
+    .order("published_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching news:", error);
+    return [];
+  }
+
+  return (data ?? []) as NewsItem[];
 }
 
 export default async function NewsPage() {
-  const news = await fetchNews();
+  const news = await getNewsList();
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-10">
