@@ -14,7 +14,7 @@ type Product = {
 };
 
 async function getProductBySlug(slug: string): Promise<Product | null> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("products")

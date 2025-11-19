@@ -18,7 +18,7 @@ type NewsItem = {
 };
 
 async function getNewsBySlug(slug: string): Promise<NewsItem | null> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("news")

@@ -1,6 +1,6 @@
 // app/api/content/products/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/server";
 
 export async function GET(req: NextRequest) {
   try {
@@ -15,6 +15,7 @@ export async function GET(req: NextRequest) {
     const from = Number.isFinite(fromRaw) && fromRaw >= 0 ? fromRaw : 0;
     const to = from + limit - 1;
 
+    const supabase = createClient();
     let query = supabase
       .from("products")
       .select(fields)

@@ -1,6 +1,6 @@
 // app/api/content/news/route.ts
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/server";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -8,6 +8,7 @@ export async function GET(req: Request) {
 
   if (slug) {
     // 详情查询
+    const supabase = createClient();
     const { data, error } = await supabase
       .from("news")
       .select("*")
@@ -23,7 +24,8 @@ export async function GET(req: Request) {
   }
 
   // 列表查询
-  const { data, error } = await supabase
+  const supabase = createClient();
+    const { data, error } = await supabase
     .from("news")
     .select("id, title, slug, content, published_at, created_at")
     .order("published_at", { ascending: false })
