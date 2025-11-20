@@ -1,33 +1,9 @@
-// app/(dashboard)/news/page.tsx
+// app/(dashboard)/dashboard/news/page.tsx
+import { getAllNews } from "@/lib/notion/notion-news";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
 
-type NewsItem = {
-  id: string;
-  title: string;
-  slug: string;
-  content: string | null;
-  published_at: string | null;
-};
-
-async function getNewsList(): Promise<NewsItem[]> {
-  const supabase = await createClient();
-
-  const { data, error } = await supabase
-    .from("news")
-    .select("id, title, slug, content, published_at")
-    .order("published_at", { ascending: false });
-
-  if (error) {
-    console.error("Error fetching news:", error);
-    return [];
-  }
-
-  return (data ?? []) as NewsItem[];
-}
-
-export default async function NewsPage() {
-  const news = await getNewsList();
+export default async function NewsListPage() {
+  const news = await getAllNews();
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-10">
@@ -47,9 +23,9 @@ export default async function NewsPage() {
                   {item.title}
                 </Link>
               </h2>
-              {item.published_at && (
+              {item.publishedAt && (
                 <p className="text-xs text-slate-500 mb-2">
-                  {new Date(item.published_at).toLocaleDateString("zh-CN")}
+                  {new Date(item.publishedAt).toLocaleDateString("zh-CN")}
                 </p>
               )}
               {item.content && (

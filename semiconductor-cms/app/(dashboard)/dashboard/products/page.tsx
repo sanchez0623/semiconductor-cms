@@ -1,34 +1,9 @@
-// app/(dashboard)/products/page.tsx
+// app/(dashboard)/dashboard/products/page.tsx
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { getAllProducts } from "@/lib/notion/notion-products";
 
-type ProductItem = {
-  id: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  category: string | null;
-  price: string | null;
-};
-
-async function getProducts(): Promise<ProductItem[]> {
-  const supabase = await createClient();
-
-  const { data, error } = await supabase
-    .from("products")
-    .select("id, name, slug, description, category, price, created_at")
-    .order("created_at", { ascending: true });
-
-  if (error) {
-    console.error("Error fetching products:", error);
-    return [];
-  }
-
-  return (data ?? []) as ProductItem[];
-}
-
-export default async function ProductsPage() {
-  const products = await getProducts();
+export default async function ProductsListPage() {
+  const products = await getAllProducts();
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-10">

@@ -17,7 +17,7 @@ export default async function AuthCallbackPage({
   const targetPath = redirectParam || next || "/dashboard";
 
   if (code) {
-    const supabase = await createClient();
+    const supabase = createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {
