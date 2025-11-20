@@ -1,9 +1,12 @@
 // app/layout.tsx
+import type { Metadata } from "next";
 import "./globals.css";
+import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
 
-export const metadata = {
-  title: "半导体 CMS Demo",
-  description: "基于 Next.js + Supabase 的简单 CMS Demo",
+export const metadata: Metadata = {
+  title: "Semiconductor CMS",
+  description: "企业级半导体CMS系统",
 };
 
 export default function RootLayout({
@@ -13,8 +16,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-CN">
-      <body className="min-h-screen bg-slate-50 text-slate-900 antialiased">
+      <body className="antialiased">
+        <Navbar />
         {children}
+        <Footer />
       </body>
     </html>
   );

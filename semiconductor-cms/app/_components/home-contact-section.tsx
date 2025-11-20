@@ -2,6 +2,11 @@
 "use client";
 
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Send, CheckCircle2, AlertCircle } from "lucide-react";
 
 export default function HomeContactSection() {
   const [form, setForm] = useState({
@@ -49,57 +54,116 @@ export default function HomeContactSection() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 text-sm">
-      <div className="space-y-1">
-        <label className="block text-xs font-medium">姓名*</label>
-        <input
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {/* 成功提示 */}
+      {success && (
+        <div className="flex items-center gap-2 p-3 rounded-lg bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400">
+          <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+          <p className="text-sm">{success}</p>
+        </div>
+      )}
+
+      {/* 错误提示 */}
+      {error && (
+        <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400">
+          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+          <p className="text-sm">{error}</p>
+        </div>
+      )}
+
+      <div className="space-y-2">
+        <Label htmlFor="name" className="text-slate-100">
+          姓名 *
+        </Label>
+        <Input
+          id="name"
           name="name"
           value={form.name}
           onChange={handleChange}
           required
-          className="w-full rounded-md border border-slate-700 bg-slate-950/40 px-2 py-1.5 text-sm"
+          placeholder="请输入您的姓名"
+          className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400 focus:border-blue-500"
         />
       </div>
-      <div className="space-y-1">
-        <label className="block text-xs font-medium">邮箱*</label>
-        <input
+
+      <div className="space-y-2">
+        <Label htmlFor="email" className="text-slate-100">
+          邮箱 *
+        </Label>
+        <Input
+          id="email"
           name="email"
           type="email"
           value={form.email}
           onChange={handleChange}
           required
-          className="w-full rounded-md border border-slate-700 bg-slate-950/40 px-2 py-1.5 text-sm"
+          placeholder="your@email.com"
+          className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400 focus:border-blue-500"
         />
       </div>
-      <div className="space-y-1">
-        <label className="block text-xs font-medium">主题</label>
-        <input
+
+      <div className="space-y-2">
+        <Label htmlFor="subject" className="text-slate-100">
+          主题
+        </Label>
+        <Input
+          id="subject"
           name="subject"
           value={form.subject}
           onChange={handleChange}
-          className="w-full rounded-md border border-slate-700 bg-slate-950/40 px-2 py-1.5 text-sm"
+          placeholder="咨询主题（可选）"
+          className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400 focus:border-blue-500"
         />
       </div>
-      <div className="space-y-1">
-        <label className="block text-xs font-medium">留言*</label>
-        <textarea
+
+      <div className="space-y-2">
+        <Label htmlFor="message" className="text-slate-100">
+          留言 *
+        </Label>
+        <Textarea
+          id="message"
           name="message"
           value={form.message}
           onChange={handleChange}
           required
-          rows={3}
-          className="w-full rounded-md border border-slate-700 bg-slate-950/40 px-2 py-1.5 text-sm"
+          rows={4}
+          placeholder="请描述您的需求..."
+          className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400 focus:border-blue-500 resize-none"
         />
       </div>
-      <button
+
+      <Button
         type="submit"
         disabled={loading}
-        className="inline-flex w-full items-center justify-center rounded-md bg-slate-50 px-3 py-2 text-xs font-medium text-slate-900 hover:bg-slate-200 disabled:opacity-60"
+        className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium py-5 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {loading ? "提交中..." : "提交联系表单"}
-      </button>
-      {success && <p className="text-xs text-emerald-300">{success}</p>}
-      {error && <p className="text-xs text-red-300">{error}</p>}
+        {loading ? (
+          <span className="flex items-center justify-center gap-2">
+            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+                fill="none"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+            提交中...
+          </span>
+        ) : (
+          <span className="flex items-center justify-center gap-2">
+            发送消息
+            <Send className="w-4 h-4" />
+          </span>
+        )}
+      </Button>
     </form>
   );
 }

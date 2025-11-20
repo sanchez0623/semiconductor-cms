@@ -1,13 +1,6 @@
 @import "tailwindcss";
 
-/* @plugin "tailwindcss-animate";
-@import "tw-animate-css";*/
-
 @custom-variant dark (&:is(.dark *));
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @theme inline {
   --color-background: var(--background);
@@ -118,11 +111,49 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+/* 基础样式 - 修复后的版本 */
+* {
+  border-color: var(--border);
+  outline-color: color-mix(in srgb, var(--ring) 50%, transparent);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* 平滑滚动 */
+html {
+  scroll-behavior: smooth;
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: oklch(0.97 0 0);
+}
+
+.dark ::-webkit-scrollbar-track {
+  background-color: oklch(0.145 0 0);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: oklch(0.85 0 0);
+  border-radius: 9999px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background-color: oklch(0.4 0 0);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: oklch(0.7 0 0);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: oklch(0.5 0 0);
 }

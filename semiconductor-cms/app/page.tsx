@@ -1,5 +1,10 @@
 // app/page.tsx
-import HomeContactSection from "./_components/home-contact-section";
+import { HeroSection } from "@/components/hero-section";
+import { FeaturesSection } from "@/components/features-section";
+import { ProductCard } from "@/components/product-card";
+import { ContactForm } from "@/components/contact-form";
+import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
 
 type NewsItem = {
   id: string;
@@ -13,11 +18,13 @@ type ProductItem = {
   name: string;
   slug: string;
   price: string | null;
+  description?: string;
+  category?: string;
 };
 
 async function fetchNews(): Promise<NewsItem[]> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/content/news`, {
-    next: { revalidate: 60 }, // 1 分钟缓存
+    next: { revalidate: 60 },
   });
   if (!res.ok) return [];
   const json = await res.json();
@@ -35,101 +42,50 @@ async function fetchProducts(): Promise<ProductItem[]> {
 }
 
 export default async function HomePage() {
-  const [news, products] = await Promise.all([fetchNews(), fetchProducts()]);
+  const products = await fetchProducts();
 
   return (
-    <main className="min-h-screen bg-slate-50">
-      {/* Hero */}
-      <section className="border-b bg-white">
-        <div className="max-w-6xl mx-auto px-4 py-16 grid gap-10 md:grid-cols-2">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-              半导体解决方案 CMS
-            </h1>
-            <p className="mt-4 text-slate-600">
-              管理你的半导体产品、新闻动态及客户咨询，一体化的内容管理平台。
-            </p>
-          </div>
-          <div className="bg-slate-900 text-slate-50 rounded-xl p-6">
-            <h2 className="text-lg font-semibold mb-3">快速联系</h2>
-            <p className="text-sm text-slate-300 mb-4">
-              填写表单，销售工程师会尽快与您联系。
-            </p>
-            <HomeContactSection />
-          </div>
-        </div>
-      </section>
+    <>
+      <Navbar />
+      <main className="min-h-screen">
+        {/* Hero Section */}
+        <HeroSection />
 
-      {/* 新闻 & 产品预览 */}
-      <section className="max-w-6xl mx-auto px-4 py-12 grid gap-8 md:grid-cols-2">
-        {/* 新闻预览 */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">最新新闻</h2>
-            <a
-              href="/news"
-              className="text-sm text-sky-700 hover:underline"
-            >
-              查看全部
-            </a>
-          </div>
-          <div className="bg-white rounded-lg border border-slate-200 divide-y">
-            {news.length === 0 && (
-              <p className="p-4 text-sm text-slate-500">暂无新闻。</p>
-            )}
-            {news.slice(0, 5).map((item) => (
-              <a
-                key={item.id}
-                href={`/news/${item.slug}`}
-                className="block px-4 py-3 hover:bg-slate-50"
-              >
-                <p className="text-sm font-medium text-slate-900">
-                  {item.title}
-                </p>
-                {item.published_at && (
-                  <p className="text-xs text-slate-500 mt-1">
-                    {new Date(item.published_at).toLocaleDateString("zh-CN")}
-                  </p>
-                )}
-              </a>
-            ))}
-          </div>
-        </div>
+        {/* Features Section */}
+        <FeaturesSection />
 
-        {/* 产品预览 */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">精选产品</h2>
-            <a
-              href="/products"
-              className="text-sm text-sky-700 hover:underline"
-            >
-              查看全部
-            </a>
+        {/* Products Section */}
+        <section className="py-24 bg-slate-50 dark:bg-slate-900" id="products">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+                我们的产品
+              </h2>
+              <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+                高品质的半导体解决方案
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {products.slice(0, 6).map((product, index) => (
+                <ProductCard
+                  key={product.id}
+                  title={product.name}
+                  description={product.description || "暂无描述"}
+                  image="/product-placeholder.jpg" // 替换为实际图片
+                  category={product.category || "未分类"}
+                  featured={index === 0}
+                  index={index}
+                />
+              ))}
+            </div>
           </div>
-          <div className="bg-white rounded-lg border border-slate-200 divide-y">
-            {products.length === 0 && (
-              <p className="p-4 text-sm text-slate-500">暂无产品。</p>
-            )}
-            {products.slice(0, 5).map((p) => (
-              <a
-                key={p.id}
-                href={`/products/${p.slug}`}
-                className="block px-4 py-3 hover:bg-slate-50"
-              >
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium text-slate-900">
-                    {p.name}
-                  </p>
-                  {p.price && (
-                    <p className="text-sm text-slate-700">¥{p.price}</p>
-                  )}
-                </div>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
-    </main>
+        </section>
+
+        {/* Contact Form */}
+        <ContactForm />
+      </main>
+      <Footer />
+    </>
   );
 }

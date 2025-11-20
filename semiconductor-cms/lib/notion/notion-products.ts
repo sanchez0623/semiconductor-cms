@@ -6,7 +6,7 @@ export type NotionProduct = {
   name: string;
   slug: string;
   visible: boolean;
-  category?: string[];
+  category?: string;
   description?: string;
   price?: number;
   imageUrl?: string;
