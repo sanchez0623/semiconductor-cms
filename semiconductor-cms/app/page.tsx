@@ -17,8 +17,6 @@ type ProductItem = {
   category?: string;
 };
 
-
-
 async function fetchProducts(): Promise<ProductItem[]> {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_SITE_URL}/api/content/products`,
