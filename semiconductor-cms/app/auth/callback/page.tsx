@@ -11,13 +11,14 @@ type CallbackSearchParams = {
 export default async function AuthCallbackPage({
   searchParams,
 }: {
-  searchParams: CallbackSearchParams;
+  searchParams: Promise<CallbackSearchParams>;
 }) {
-  const { code, redirect: redirectParam, next } = searchParams;
+  const params = await searchParams;
+  const { code, redirect: redirectParam, next } = params;
   const targetPath = redirectParam || next || "/dashboard";
 
   if (code) {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {

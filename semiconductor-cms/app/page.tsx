@@ -5,13 +5,8 @@ import { ProductCard } from "@/components/product-card";
 import { ContactForm } from "@/components/contact-form";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-
-type NewsItem = {
-  id: string;
-  title: string;
-  slug: string;
-  published_at: string | null;
-};
+import { NewsSection } from "@/components/news-section";
+import { getAllNews } from "@/lib/notion/notion-news";
 
 type ProductItem = {
   id: string;
@@ -22,14 +17,7 @@ type ProductItem = {
   category?: string;
 };
 
-async function fetchNews(): Promise<NewsItem[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/content/news`, {
-    next: { revalidate: 60 },
-  });
-  if (!res.ok) return [];
-  const json = await res.json();
-  return json.data ?? [];
-}
+
 
 async function fetchProducts(): Promise<ProductItem[]> {
   const res = await fetch(
@@ -43,6 +31,7 @@ async function fetchProducts(): Promise<ProductItem[]> {
 
 export default async function HomePage() {
   const products = await fetchProducts();
+  const news = await getAllNews();
 
   return (
     <>
@@ -81,6 +70,9 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* News Section */}
+        <NewsSection news={news} />
 
         {/* Contact Form */}
         <ContactForm />
