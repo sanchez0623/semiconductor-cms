@@ -150,7 +150,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
@@ -159,7 +159,6 @@ export default function LoginPage() {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   // 回跳地址（例如未登录访问 /dashboard，会 redirect 到 /auth/login?redirect=/dashboard）
