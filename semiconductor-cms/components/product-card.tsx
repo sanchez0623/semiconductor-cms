@@ -1,9 +1,9 @@
 "use client"
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, Star } from "lucide-react"
+import { ArrowRight, Cpu } from "lucide-react"
 import { motion } from "framer-motion"
 
 interface ProductCardProps {
@@ -23,47 +23,33 @@ export function ProductCard({ title, description, image, category, featured, ind
       transition={{ duration: 0.5, delay: index * 0.1 }}
       viewport={{ once: true }}
     >
-      <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 hover:shadow-2xl transition-all duration-300">
-        {featured && (
-          <div className="absolute top-4 right-4 z-10">
-            <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0">
-              <Star className="w-3 h-3 mr-1" />
-              推荐
-            </Badge>
-          </div>
-        )}
-
-        <div className="relative h-64 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent z-10" />
-          <img
-            src={image}
-            alt={title}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-          />
+      <div className="group relative rounded-2xl bg-slate-900/40 border border-white/5 hover:border-cyan-500/50 overflow-hidden transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(6,182,212,0.2)]">
+        
+        {/* 图片区域 */}
+        <div className="relative h-48 overflow-hidden bg-slate-900">
+           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent z-10 opacity-80" />
+           {/* Placeholder image style */}
+           <div className="w-full h-full bg-[radial-gradient(circle_at_50%_50%,_#1e293b_0%,_#0f172a_100%)] group-hover:scale-105 transition-transform duration-700 flex items-center justify-center">
+             <Cpu className="w-16 h-16 text-slate-700 group-hover:text-cyan-800 transition-colors" />
+           </div>
+           
+           {featured && (
+             <Badge className="absolute top-4 right-4 z-20 bg-cyan-500/20 text-cyan-300 border-cyan-500/30 backdrop-blur-md">
+               旗舰新品
+             </Badge>
+           )}
         </div>
 
-        <CardHeader>
-          <Badge variant="secondary" className="w-fit mb-2">
-            {category}
-          </Badge>
-          <CardTitle className="text-2xl group-hover:text-blue-600 transition-colors">
-            {title}
-          </CardTitle>
-          <CardDescription className="text-base leading-relaxed">
-            {description}
-          </CardDescription>
-        </CardHeader>
-
-        <CardFooter>
-          <Button
-            variant="ghost"
-            className="group/button w-full justify-between p-6 hover:bg-blue-600 hover:text-white transition-all"
-          >
-            <span className="font-semibold">了解更多</span>
-            <ArrowRight className="h-5 w-5 group-hover/button:translate-x-2 transition-transform" />
-          </Button>
-        </CardFooter>
-      </Card>
+        <div className="p-6 relative z-20">
+          <div className="text-xs font-medium text-cyan-500 mb-2 uppercase tracking-wider">{category}</div>
+          <h3 className="text-xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">{title}</h3>
+          <p className="text-slate-400 text-sm leading-relaxed mb-6 line-clamp-2">{description}</p>
+          
+          <div className="flex items-center text-sm font-medium text-white/60 group-hover:text-white transition-colors">
+            了解详情 <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform text-cyan-500" />
+          </div>
+        </div>
+      </div>
     </motion.div>
   )
 }

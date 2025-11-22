@@ -7,20 +7,24 @@ export default function SiteLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative min-h-screen">
-      {/* Modern Tech Dark Background */}
-      <div className="fixed inset-0 -z-10 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-        {/* Tech Grid Pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)] opacity-20" />
-        
-        {/* Animated Glow Effects */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }} />
+    <div className="relative min-h-screen flex flex-col bg-slate-950 text-slate-200 selection:bg-cyan-500/30 overflow-x-hidden">
+      {/* 全局背景特效：深色噪点与微光 */}
+      <div className="fixed inset-0 bg-[url('/noise.png')] opacity-[0.03] pointer-events-none z-0 mix-blend-overlay"></div>
+      <div className="fixed top-[-20%] right-[-10%] w-[800px] h-[800px] bg-blue-600/10 blur-[120px] rounded-full pointer-events-none z-0"></div>
+      <div className="fixed bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-cyan-600/10 blur-[100px] rounded-full pointer-events-none z-0"></div>
+
+      {/* 悬浮导航栏 */}
+      <div className="relative z-50">
+        <Navbar />
       </div>
-      
-      <Navbar />
-      {children}
-      <Footer />
+
+      <main className="flex-1 relative z-10">
+        {children}
+      </main>
+
+      <div className="relative z-10 border-t border-white/5 bg-slate-950">
+        <Footer />
+      </div>
     </div>
   );
 }

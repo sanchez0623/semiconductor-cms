@@ -1,87 +1,83 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Play } from "lucide-react"
+import { ArrowRight, Cpu } from "lucide-react"
 import { motion } from "framer-motion"
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800">
-      {/* Animated background grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:64px_64px]" />
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-950">
+      {/* 动态电路网格背景 */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
       
-      {/* Gradient orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
-      
-      <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center max-w-5xl mx-auto"
-        >
+      {/* 顶部聚光灯 */}
+      <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-cyan-500/10 via-blue-500/5 to-transparent blur-3xl" />
+
+      <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 pt-20">
+        <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
+          
+          {/* 徽章 */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-8"
           >
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
             </span>
-            <span className="text-sm text-white/90">创新半导体解决方案</span>
+            <span className="text-xs font-medium text-cyan-100 tracking-wide uppercase">Next Gen Semiconductor</span>
           </motion.div>
 
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-            推动未来
-            <span className="block bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              半导体技术
+          {/* 主标题 */}
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-5xl sm:text-7xl font-bold tracking-tight text-white mb-8 leading-[1.1]"
+          >
+            赋能未来的 <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
+              智能芯片架构
             </span>
-          </h1>
+          </motion.h1>
 
-          <p className="text-xl text-slate-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-            我们提供业界领先的半导体制造设备和解决方案，助力您的创新之路
-          </p>
+          {/* 副标题 */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-lg sm:text-xl text-slate-400 mb-10 max-w-2xl leading-relaxed"
+          >
+            我们致力于打造极致性能与能效比的半导体解决方案，
+            为人工智能、云计算及边缘计算提供坚实的算力基石。
+          </motion.p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          {/* 按钮组 */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
+          >
             <Button
               size="lg"
-              className="group bg-white text-slate-900 hover:bg-slate-100 px-8 py-6 text-lg rounded-full"
+              className="bg-cyan-600 hover:bg-cyan-500 text-white border-0 shadow-[0_0_30px_-10px_rgba(6,182,212,0.6)] transition-all duration-300 px-8 h-12 text-base rounded-full"
             >
-              开始咨询
-              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              探索解决方案
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
-            
-            {/* <Button
+            <Button
               size="lg"
               variant="outline"
-              className="group border-2 border-white/30 text-white hover:bg-white/10 px-8 py-6 text-lg rounded-full backdrop-blur-sm"
+              className="border-white/10 bg-white/5 text-white hover:bg-white/10 hover:text-cyan-300 backdrop-blur-sm h-12 px-8 text-base rounded-full"
             >
-              <Play className="mr-2 h-5 w-5" />
-              观看演示
-            </Button> */}
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
-            className="mt-20"
-          >
-            <div className="relative mx-auto max-w-5xl">
-              <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/50 to-purple-500/50 rounded-2xl blur-2xl opacity-50" />
-              <div className="relative bg-slate-800/50 backdrop-blur-xl border border-white/10 rounded-2xl p-2">
-                <img
-                  src="/hero-image.jpg"
-                  alt="产品展示"
-                  className="w-full h-auto rounded-xl"
-                />
-              </div>
-            </div>
+              <Cpu className="mr-2 h-4 w-4" />
+              技术文档
+            </Button>
           </motion.div>
-        </motion.div>
+        </div>
       </div>
     </section>
   )
