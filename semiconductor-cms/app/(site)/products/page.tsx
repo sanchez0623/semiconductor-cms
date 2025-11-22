@@ -1,19 +1,38 @@
 import { getAllProducts } from "@/lib/notion/notion-products";
 import { ProductCard } from "@/components/product-card";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 export default async function ProductsListPage() {
   const products = await getAllProducts();
 
   return (
-    <main className="min-h-screen bg-slate-50 dark:bg-slate-900 py-24">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-950 pt-24 pb-20 px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto">
+        {/* 顶部导航 - 新增 */}
+        <div className="mb-8">
+          <Button
+            variant="ghost"
+            asChild
+            className="text-slate-400 hover:text-cyan-400 hover:bg-white/5 -ml-4"
+          >
+            <Link href="/#products" className="gap-2">
+              <ArrowLeft className="w-4 h-4" />
+              返回首页
+            </Link>
+          </Button>
+        </div>
+
+        {/* 标题区域 - 样式调整 */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl lg:text-5xl font-bold mb-6">产品中心</h1>
-          <p className="text-xl text-slate-600 dark:text-slate-400">
+          <h1 className="text-4xl lg:text-5xl font-bold mb-6 text-white">产品中心</h1>
+          <p className="text-xl text-slate-400">
             浏览全部半导体产品
           </p>
         </div>
 
+        {/* 列表区域 */}
         {products.length === 0 ? (
           <p className="text-center text-slate-500">暂无产品。</p>
         ) : (
@@ -31,6 +50,6 @@ export default async function ProductsListPage() {
           </div>
         )}
       </div>
-    </main>
+    </div>
   );
 }

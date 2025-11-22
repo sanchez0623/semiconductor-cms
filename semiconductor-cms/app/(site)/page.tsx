@@ -4,6 +4,9 @@ import { ProductCard } from "@/components/product-card";
 import { ContactForm } from "@/components/contact-form";
 import { NewsSection } from "@/components/news-section";
 import { getAllNews } from "@/lib/notion/notion-news";
+import Link from "next/link"; // 引入 Link
+import { Button } from "@/components/ui/button"; // 引入 Button
+import { ArrowRight } from "lucide-react"; // 引入图标
 
 type ProductItem = {
   id: string;
@@ -30,13 +33,10 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero Section (已包含锚点功能如果 Hero 内部有的话，通常没有) */}
       <HeroSection />
-
-      {/* Features Section */}
       <FeaturesSection />
 
-      {/* Products Section - 修复锚点 id="products" */}
+      {/* Products Section */}
       <section className="py-24 relative" id="products">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
@@ -51,26 +51,39 @@ export default async function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products.slice(0, 6).map((product, index) => (
+          {/* 只展示前 3 个产品 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {products.slice(0, 3).map((product, index) => (
               <ProductCard
                 key={product.id}
                 title={product.name}
                 description={product.description || "暂无描述"}
-                image="/product-placeholder.jpg" // 请确保此图片存在或替换
+                image="/product-placeholder.jpg"
                 category={product.category || "未分类"}
                 featured={index === 0}
                 index={index}
               />
             ))}
           </div>
+
+          {/* 查看更多产品按钮 */}
+          <div className="text-center">
+            <Button 
+              asChild 
+              variant="outline"
+              className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 hover:text-cyan-300 bg-transparent rounded-full px-8"
+            >
+              <Link href="/products">
+                查看更多产品 <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
 
-      {/* News Section - 组件内部通常包含 id="news"，如果没有请检查组件 */}
+      {/* News Section */}
       <NewsSection news={news} />
 
-      {/* Contact Form - 修复锚点 id="contact" */}
       <div id="contact" className="relative">
         <ContactForm />
       </div>
