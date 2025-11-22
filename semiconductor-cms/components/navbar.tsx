@@ -59,11 +59,14 @@ export function Navbar() {
 
           {/* CTA Buttons */}
           <div className="hidden lg:flex items-center gap-4">
-            <Button variant="ghost" className="text-slate-700 dark:text-slate-300">
+            {/* <Button variant="ghost" className="text-slate-700 dark:text-slate-300">
               登录
-            </Button>
-            <Button className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-full px-6">
-              联系我们
+            </Button> */}
+            <Button 
+                asChild
+                className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-full px-6"
+                >
+                <a href="#contact">联系我们</a>
             </Button>
           </div>
 
@@ -104,11 +107,14 @@ export function Navbar() {
                 关于我们
               </a>
               <div className="pt-4 space-y-2">
-                <Button variant="outline" className="w-full">
+                {/* <Button variant="outline" className="w-full">
                   登录
-                </Button>
-                <Button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
-                  联系我们
+                </Button> */}
+                <Button 
+                    asChild
+                    className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-full px-6"
+                    >
+                    <a href="#contact">联系我们</a>
                 </Button>
               </div>
             </div>

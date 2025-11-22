@@ -6,22 +6,57 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Mail, Phone, MapPin, Send } from "lucide-react"
+import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle } from "lucide-react"
 import { motion } from "framer-motion"
 
 export function ContactForm() {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [success, setSuccess] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target
+    setForm((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-    // 处理表单提交
-    setTimeout(() => setIsSubmitting(false), 2000)
+    setSuccess(null)
+    setError(null)
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      })
+
+      const json = await res.json()
+      
+      if (!res.ok) {
+        throw new Error(json.error || "提交失败")
+      }
+
+      setSuccess("提交成功，我们会尽快与您联系！")
+      setForm({ name: "", email: "", subject: "", message: "" })
+    } catch (err: any) {
+      setError(err.message ?? "服务器错误，请稍后重试。")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
-    <section className="py-24 bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+    <section id="contact" className="py-24 bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           {/* Left side - Contact info */}
@@ -84,52 +119,70 @@ export function ContactForm() {
                 <CardDescription>请填写以下信息，我们会尽快与您联系</CardDescription>
               </CardHeader>
               <CardContent>
+                {/* 成功提示 */}
+                {success && (
+                  <div className="flex items-center gap-2 p-3 rounded-lg bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 mb-4">
+                    <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                    <p className="text-sm">{success}</p>
+                  </div>
+                )}
+
+                {/* 错误提示 */}
+                {error && (
+                  <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 mb-4">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    <p className="text-sm">{error}</p>
+                  </div>
+                )}
+
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="name">姓名 *</Label>
-                      <Input id="name" placeholder="张三" required />
+                      <Input 
+                        id="name" 
+                        name="name"
+                        placeholder="张三" 
+                        required 
+                        value={form.name}
+                        onChange={handleChange}
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email">邮箱 *</Label>
-                      <Input id="email" type="email" placeholder="zhangsan@example.com" required />
-                    </div>
-                  </div>
-
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">电话</Label>
-                      <Input id="phone" placeholder="+86 138-0000-0000" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="company">公司</Label>
-                      <Input id="company" placeholder="公司名称" />
+                      <Input 
+                        id="email" 
+                        name="email"
+                        type="email" 
+                        placeholder="zhangsan@example.com" 
+                        required 
+                        value={form.email}
+                        onChange={handleChange}
+                      />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="subject">咨询类型 *</Label>
-                    <Select required>
-                      <SelectTrigger>
-                        <SelectValue placeholder="请选择" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="product">产品咨询</SelectItem>
-                        <SelectItem value="quote">报价询问</SelectItem>
-                        <SelectItem value="support">技术支持</SelectItem>
-                        <SelectItem value="partnership">合作洽谈</SelectItem>
-                        <SelectItem value="other">其他</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="subject">主题</Label>
+                    <Input 
+                      id="subject" 
+                      name="subject"
+                      placeholder="咨询主题（可选）" 
+                      value={form.subject}
+                      onChange={handleChange}
+                    />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="message">留言 *</Label>
                     <Textarea
                       id="message"
+                      name="message"
                       placeholder="请详细描述您的需求..."
                       rows={6}
                       required
+                      value={form.message}
+                      onChange={handleChange}
                     />
                   </div>
 
@@ -139,7 +192,25 @@ export function ContactForm() {
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (
-                      "发送中..."
+                      <span className="flex items-center justify-center gap-2">
+                        <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                            fill="none"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          />
+                        </svg>
+                        发送中...
+                      </span>
                     ) : (
                       <>
                         发送消息

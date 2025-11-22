@@ -73,7 +73,9 @@ export default async function HomePage() {
         <NewsSection news={news} />
 
         {/* Contact Form */}
-        <ContactForm />
+        <div id="contact">
+          <ContactForm />
+        </div>
       </main>
       <Footer />
     </>
