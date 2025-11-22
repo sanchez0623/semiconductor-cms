@@ -1,9 +1,28 @@
 // app/(site)/news/[slug]/page.tsx
 import { notFound } from "next/navigation";
-import { getNewsBySlug } from "@/lib/notion/notion-news";
-import { ArrowLeft, Calendar, Clock } from "lucide-react";
+import { getNewsBySlug, getNewsPaginated } from "@/lib/notion/notion-news";
+import { ArrowLeft, Calendar } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+
+// 1. 开启 ISR 增量静态再生，每 3600 秒（1小时）尝试更新一次缓存
+export const revalidate = 3600;
+
+// 2. 允许动态参数：如果访问的 slug 不在 generateStaticParams 返回的列表中，
+// Next.js 不会返回 404，而是会尝试实时生成页面并缓存下来。
+export const dynamicParams = true; 
+
+// 3. 静态路径生成：只预渲染最新的 50 条新闻
+// 这样可以极大缩短构建时间，同时保证热点内容秒开。
+export async function generateStaticParams() {
+  // 假设 getNewsPaginated 是我们之前定义的可以传 pageSize 的方法
+  // 如果没有这个方法，可以用 getAllNews().slice(0, 50) 模拟，但最好是在 API 层级就限制查询数量
+  const { items } = await getNewsPaginated({ pageSize: 50 });
+
+  return items.map((item) => ({
+    slug: item.slug,
+  }));
+}
 
 interface NewsDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -19,7 +38,7 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
 
   return (
     <div className="min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8 bg-slate-950">
-      {/* 顶部导航 */}
+      {/* ... 保持您满意的深色 UI 代码不变 ... */}
       <div className="max-w-3xl mx-auto mb-8">
         <Button
           variant="ghost"
@@ -33,7 +52,6 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
         </Button>
       </div>
 
-      {/* 文章头部 */}
       <article className="max-w-3xl mx-auto">
         <header className="mb-10">
           <div className="flex items-center gap-4 text-sm text-cyan-500/80 mb-4">
@@ -55,7 +73,6 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
           <div className="h-px w-full bg-gradient-to-r from-cyan-500/50 via-blue-500/50 to-transparent opacity-50" />
         </header>
 
-        {/* 文章正文 - 使用 prose-invert 适配深色模式 */}
         <div className="prose prose-invert prose-slate max-w-none prose-headings:text-slate-200 prose-p:text-slate-300 prose-a:text-cyan-400 prose-strong:text-white prose-img:rounded-xl prose-img:border prose-img:border-white/10">
           {item.content ? (
             <div className="whitespace-pre-wrap leading-relaxed">

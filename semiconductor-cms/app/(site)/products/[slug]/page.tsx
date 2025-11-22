@@ -1,10 +1,25 @@
 // app/(site)/products/[slug]/page.tsx
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getProductBySlug } from "@/lib/notion/notion-products";
+import { getProductBySlug, getProductsPaginated } from "@/lib/notion/notion-products";
 import { ArrowLeft, Cpu, ShieldCheck, Zap, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+
+// 1. 缓存策略：1小时更新一次
+export const revalidate = 3600;
+
+// 2. 允许动态生成未预渲染的页面
+export const dynamicParams = true;
+
+// 3. 预生成策略：只预生成前 50 个热门/最新产品
+export async function generateStaticParams() {
+  const { items } = await getProductsPaginated({ pageSize: 50 });
+
+  return items.map((product) => ({
+    slug: product.slug,
+  }));
+}
 
 export default async function ProductDetailPage({
   params,
@@ -20,8 +35,8 @@ export default async function ProductDetailPage({
 
   return (
     <div className="min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8 bg-slate-950">
+      {/* ... 保持您满意的深色 UI 代码不变 ... */}
       <div className="max-w-6xl mx-auto">
-        {/* 顶部导航 */}
         <div className="mb-8">
           <Button
             variant="ghost"
@@ -36,20 +51,15 @@ export default async function ProductDetailPage({
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-          {/* 左侧：产品图片展示区 */}
           <div className="relative">
             <div className="aspect-square rounded-2xl overflow-hidden bg-slate-900 border border-white/10 shadow-2xl shadow-cyan-900/20 group">
-              {/* 模拟产品图片占位 */}
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_#1e293b_0%,_#020617_100%)] flex items-center justify-center">
                 <Cpu className="w-32 h-32 text-slate-700 group-hover:text-cyan-600/50 transition-colors duration-500" />
               </div>
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent" />
-              
-              {/* 装饰性边框光效 */}
               <div className="absolute inset-0 border-2 border-white/5 rounded-2xl group-hover:border-cyan-500/30 transition-colors duration-500" />
             </div>
             
-            {/* 产品特性小图标 */}
             <div className="grid grid-cols-3 gap-4 mt-6">
               {[
                 { icon: Zap, label: "高性能", color: "text-yellow-400" },
@@ -64,7 +74,6 @@ export default async function ProductDetailPage({
             </div>
           </div>
 
-          {/* 右侧：产品信息区 */}
           <div className="flex flex-col justify-center">
             <div className="mb-6">
               {product.category && (
@@ -102,7 +111,6 @@ export default async function ProductDetailPage({
                   </Link>
                 </Button>
                 
-                {/* 预留按钮：比如下载规格书 */}
                 <Button 
                   size="lg" 
                   variant="outline"
