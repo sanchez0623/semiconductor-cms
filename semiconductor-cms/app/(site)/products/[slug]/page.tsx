@@ -1,8 +1,7 @@
-// app/(dashboard)/products/[slug]/page.tsx
+// app/(site)/products/[slug]/page.tsx
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getProductBySlug } from "@/lib/notion/notion-products";
-import { projectUpdate } from "next/dist/build/swc/generated-native";
 
 export default async function ProductDetailPage({
   params,
@@ -11,7 +10,6 @@ export default async function ProductDetailPage({
 }) {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
-  console.log(product)
 
   if (!product) {
     notFound();

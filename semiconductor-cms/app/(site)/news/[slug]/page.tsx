@@ -1,4 +1,4 @@
-// app/news/[slug]/page.tsx
+// app/(site)/news/[slug]/page.tsx
 import { notFound } from "next/navigation";
 import { getNewsBySlug } from "@/lib/notion/notion-news";
 

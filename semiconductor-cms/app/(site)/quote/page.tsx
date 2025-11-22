@@ -1,4 +1,4 @@
-// app/(dashboard)/quote/page.tsx
+// app/(site)/quote/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
