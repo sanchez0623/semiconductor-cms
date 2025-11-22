@@ -30,7 +30,9 @@ export function ProductCard({ title, description, image, category, featured, ind
            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent z-10 opacity-80" />
            {/* Placeholder image style */}
            <div className="w-full h-full bg-[radial-gradient(circle_at_50%_50%,_#1e293b_0%,_#0f172a_100%)] group-hover:scale-105 transition-transform duration-700 flex items-center justify-center">
-             <Cpu className="w-16 h-16 text-slate-700 group-hover:text-cyan-800 transition-colors" />
+              <img src={image} alt={title}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              />
            </div>
            
            {featured && (
