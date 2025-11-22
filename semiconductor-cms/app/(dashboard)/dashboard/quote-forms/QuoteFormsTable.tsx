@@ -1,7 +1,9 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import { Pagination } from "./Pagination";
-import { LoadingSpinner } from "./LoadingSpinner";
-import { ErrorMessage } from "./ErrorMessage";
+import { Pagination } from "../_components/Pagination";
+import { LoadingSpinner } from "../_components/LoadingSpinner";
+import { ErrorMessage } from "../_components/ErrorMessage";
 
 interface QuoteForm {
   id: string;
@@ -75,60 +77,60 @@ export function QuoteFormsTable() {
 
   if (data.length === 0) {
     return (
-      <div className="text-center py-12 text-slate-500 dark:text-slate-400">
+      <div className="text-center py-12 text-slate-500">
         No quote forms found
       </div>
     );
   }
 
   return (
-    <>
+    <div className="bg-white rounded-lg border border-slate-200">
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+          <thead className="bg-slate-50 border-b border-slate-200">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Name
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Email
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Company
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Product ID
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Details
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Submitted
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+          <tbody className="divide-y divide-slate-200">
             {data.map((form) => (
               <tr
                 key={form.id}
-                className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                className="hover:bg-slate-50 transition-colors"
               >
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 dark:text-slate-100">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
                   {form.name}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-400">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                   {form.email}
                 </td>
-                <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
+                <td className="px-6 py-4 text-sm text-slate-600">
                   {form.company || "—"}
                 </td>
-                <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
+                <td className="px-6 py-4 text-sm text-slate-600">
                   {form.product_id || "—"}
                 </td>
-                <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 max-w-md truncate">
+                <td className="px-6 py-4 text-sm text-slate-600 max-w-md truncate">
                   {form.details || "—"}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
                   {new Date(form.created_at).toLocaleString("zh-CN")}
                 </td>
               </tr>
@@ -145,6 +147,6 @@ export function QuoteFormsTable() {
           isLoading={isLoading}
         />
       )}
-    </>
+    </div>
   );
 }
