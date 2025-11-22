@@ -1,4 +1,3 @@
-// middleware.ts
 import { NextResponse, NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
@@ -15,7 +14,6 @@ export async function middleware(req: NextRequest) {
           return req.cookies.get(name)?.value;
         },
         set(name: string, value: string, options) {
-          // ✅ 同时设置到 request 和 response
           req.cookies.set({ name, value, ...options });
           res.cookies.set({ name, value, ...options });
         },
@@ -27,14 +25,16 @@ export async function middleware(req: NextRequest) {
     }
   );
 
-  // ✅ 刷新 session（重要！）
+  // 🔒 安全修正：使用 getUser() 替代 getSession()
+  // getUser 会向 Supabase Auth 服务器验证 token 的真实性
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
   // 只保护 /dashboard 开头的路径
   if (url.pathname.startsWith("/dashboard")) {
-    if (!session) {
+    // 如果用户不存在（未登录或 token 无效），重定向到登录页
+    if (!user) {
       const redirectUrl = new URL("/auth/login", req.url);
       redirectUrl.searchParams.set("redirect", url.pathname + url.search);
       return NextResponse.redirect(redirectUrl);
@@ -47,6 +47,6 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     "/dashboard/:path*",
-    "/auth/callback",  // ✅ 添加 callback 路由
+    "/auth/callback",
   ],
 };
