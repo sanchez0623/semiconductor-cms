@@ -1,29 +1,9 @@
-lib/supabase/client.ts（用于客户端组件）
-需要 Server Actions / Route Handlers 的「服务端 Supabase 客户端」，可以再建一个 lib/supabase/server.ts
-——这两个有什么区别？什么时候该用哪个？
+优化点：
 
+SEO 动态元数据 (generateMetadata)：
+目前详情页虽然有了 ISR，但页面的 title 和 description 可能还是静态的。
+优化点：为 news/[slug]和 products/[slug] 增加动态 Metadata 生成，这样分享到社交媒体或被搜索引擎抓取时，能正确显示文章标题和摘要。
 
-1.跳转到dashboard，如果没有登录，则跳转到登录页；
-2.成功登录后，跳转至dashboard页
-3.加一个 /auth/callback 页面，处理 Magic Link 返回后的 session
-4.用中间件来保护 (dashboard) 路由
-
-
-
-数据库
-1.帮我在supabase设计开启 Row Level Security（建议开启），记得为这些表添加 policy，允许匿名插入 contact / quote（仅允许 insert、不允许 select），允许管理员角色读写等。
-
-
-把 (dashboard) 中的页面接上 Supabase，实现后台 CRUD。
-增加 RLS policy 和管理员角色，让前台表单匿名可写、后台可读。
-
-
-后台数据列表
-在 (dashboard) 下面：
-dashboard/news 页面：通过 supabase 或上述 API 获取 news 列表
-dashboard/products 页面：同理
-dashboard/contact-forms、dashboard/quote-forms：后台查看表单数据
-
-
-把news和products 改为使用notion管理
-产品和新闻都要增加图片展示（产品一个图片，新闻多个图片）
+加载骨架屏 (loading.tsx)：
+虽然有 ISR，但如果用户访问的是尚未生成的冷门页面（触发 dynamicParams），还是会有一瞬间的等待。
+优化点：为这两个路由添加深色风格的 loading.tsx（Skeleton 骨架屏），避免用户看到白屏或布局跳动。
