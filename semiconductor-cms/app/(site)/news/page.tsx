@@ -1,4 +1,4 @@
-// app/news/page.tsx
+// app/(site)/news/page.tsx
 import { getAllNews } from "@/lib/notion/notion-news";
 import Link from "next/link";
 

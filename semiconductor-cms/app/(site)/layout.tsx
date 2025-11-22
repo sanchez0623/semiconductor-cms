@@ -19,7 +19,7 @@ export default function SiteLayout({
       </div>
       
       <Navbar />
-      <main>{children}</main>
+      {children}
       <Footer />
     </div>
   );

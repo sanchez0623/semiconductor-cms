@@ -29,7 +29,7 @@ export default async function HomePage() {
   const news = await getAllNews();
 
   return (
-    <>
+    <main>
       {/* Hero Section */}
       <HeroSection />
 
@@ -71,6 +71,6 @@ export default async function HomePage() {
       <div id="contact">
         <ContactForm />
       </div>
-    </>
+    </main>
   );
 }
