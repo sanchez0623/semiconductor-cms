@@ -123,7 +123,6 @@ export async function getAllProducts(): Promise<NotionProduct[]> {
 
   if (response.results.length === 0) return [];
 
-  console.log(response.results)
   return response.results.map((page: any) => {
     const props = page.properties;
 
