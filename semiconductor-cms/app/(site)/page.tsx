@@ -3,32 +3,14 @@ import { FeaturesSection } from "@/components/features-section";
 import { ProductCard } from "@/components/product-card";
 import { ContactForm } from "@/components/contact-form";
 import { NewsSection } from "@/components/news-section";
+import { getAllProducts } from "@/lib/notion/notion-products"; 
 import { getAllNews } from "@/lib/notion/notion-news";
 import Link from "next/link"; // 引入 Link
 import { Button } from "@/components/ui/button"; // 引入 Button
 import { ArrowRight } from "lucide-react"; // 引入图标
 
-type ProductItem = {
-  id: string;
-  name: string;
-  slug: string;
-  price: string | null;
-  description?: string;
-  category?: string;
-};
-
-async function fetchProducts(): Promise<ProductItem[]> {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL}/api/content/products`,
-    { next: { revalidate: 60 } }
-  );
-  if (!res.ok) return [];
-  const json = await res.json();
-  return json.data ?? [];
-}
-
 export default async function HomePage() {
-  const products = await fetchProducts();
+  const products = await getAllProducts(); 
   const news = await getAllNews();
 
   return (
