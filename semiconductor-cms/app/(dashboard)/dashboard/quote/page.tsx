@@ -1,7 +1,6 @@
-// app/(dashboard)/quote/page.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react"; // 引入 Suspense
 import { useSearchParams } from "next/navigation";
 
 type ProductOption = {
@@ -9,7 +8,8 @@ type ProductOption = {
   name: string;
 };
 
-export default function QuotePage() {
+// 1. 把原来的页面逻辑抽取成一个子组件 QuoteContent
+function QuoteContent() {
   const searchParams = useSearchParams();
   const preselectedId = searchParams.get("productId");
 
@@ -23,7 +23,6 @@ export default function QuotePage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitResult, setSubmitResult] = useState<string | null>(null);
 
-  // 拉取产品列表（用于下拉框）
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -36,7 +35,6 @@ export default function QuotePage() {
         }));
         setProducts(list);
 
-        // 如果 URL 带了 productId 且存在于列表中，则默认选中
         if (preselectedId && list.some((p) => p.id === preselectedId)) {
           setProductId(preselectedId);
         }
@@ -86,7 +84,6 @@ export default function QuotePage() {
       <h1 className="text-3xl font-bold mb-6">提交询价</h1>
 
       <form className="space-y-5" onSubmit={handleSubmit}>
-        {/* 选择产品 */}
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">
             目标产品
@@ -105,7 +102,6 @@ export default function QuotePage() {
           </select>
         </div>
 
-        {/* 公司名称 */}
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">
             公司名称
@@ -118,7 +114,6 @@ export default function QuotePage() {
           />
         </div>
 
-        {/* 联系人 */}
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">
             联系人
@@ -131,7 +126,6 @@ export default function QuotePage() {
           />
         </div>
 
-        {/* 电话 */}
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">
             联系电话
@@ -144,20 +138,19 @@ export default function QuotePage() {
           />
         </div>
 
-        {/* 邮箱 */}
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">
-            邮箱
+            电子邮箱
           </label>
           <input
             type="email"
             className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
         </div>
 
-        {/* 需求描述 */}
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">
             需求描述
@@ -183,5 +176,14 @@ export default function QuotePage() {
         )}
       </form>
     </main>
+  );
+}
+
+// 2. 导出默认组件，用 Suspense 包裹 QuoteContent
+export default function QuotePage() {
+  return (
+    <Suspense fallback={<div className="p-10 text-center">加载中...</div>}>
+      <QuoteContent />
+    </Suspense>
   );
 }
