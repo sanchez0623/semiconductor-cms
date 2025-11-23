@@ -50,12 +50,12 @@ export default async function ProductsListPage() {
                 >
                   查看详情
                 </Link>
-                <Link
+                {/* <Link
                   href={`/quote?productId=${p.id}`}
                   className="ml-auto text-sm text-sky-700 hover:underline"
                 >
                   直接询价
-                </Link>
+                </Link> */}
               </div>
             </article>
           ))}
