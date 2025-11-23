@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import Link from "next/link" // ✅ 引入 Link
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -35,39 +36,39 @@ export function Navbar() {
         <div className="flex items-center justify-between">
           {/* Logo (Left) */}
           <div className="flex-shrink-0 z-20 relative">
-            <a href="/" className="flex items-center gap-2 group">
-              <div className="w-9 h-9 rounded bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.3)] group-hover:shadow-[0_0_25px_rgba(6,182,212,0.6)] transition-all duration-300">
+            <Link href="/" className="flex items-center gap-2 group">
+              <div className="w-9 h-9 rounded bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.3)] group-hover:shadow-[0_0_25px_rgba(6,182,212,0.5)] transition-shadow duration-300">
                 <span className="text-white font-bold text-lg">S</span>
               </div>
               <span className="text-xl font-bold text-white tracking-tight">
                 Semi<span className="text-cyan-400">conductor</span>
               </span>
-            </a>
+            </Link>
           </div>
 
           {/* Desktop Navigation (Center - Absolute Position) */}
           <div className="hidden lg:flex items-center gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-            <a href="#products" className={linkClass}>
+            <Link href="/#products" className={linkClass}>
               产品中心
               {activeIndicator}
-            </a>
-            <a href="#news" className={linkClass}>
+            </Link>
+            <Link href="/#news" className={linkClass}>
               新闻动态
               {activeIndicator}
-            </a>
-            <a href="#about" className={linkClass}>
+            </Link>
+            <Link href="/about" className={linkClass}> {/* ✅ 指向新页面 */}
               关于我们
               {activeIndicator}
-            </a>
+            </Link>
           </div>
 
           {/* CTA Buttons (Right) */}
           <div className="hidden lg:flex items-center gap-4 z-20 relative">
             <Button 
                 asChild
-                className="bg-white/10 hover:bg-white/20 text-white border border-white/10 backdrop-blur-sm rounded-full px-6 shadow-[0_0_20px_-5px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.5)] transition-all"
+                className="bg-white/10 hover:bg-white/20 text-white border border-white/10 backdrop-blur-sm rounded-full px-6 shadow-[0_0_20px_-5px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.5)] transition-all duration-300"
                 >
-                <a href="#contact">联系我们</a>
+                <Link href="/#contact">联系我们</Link>
             </Button>
           </div>
 
@@ -93,34 +94,34 @@ export function Navbar() {
             className="lg:hidden bg-slate-950/95 backdrop-blur-xl border-b border-white/10 overflow-hidden absolute top-full left-0 right-0"
           >
             <div className="px-4 py-6 space-y-4 flex flex-col">
-              <a 
-                href="#products" 
+              <Link 
+                href="/#products" 
                 className="text-slate-300 hover:text-cyan-400 py-2 text-lg font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 产品中心
-              </a>
-              <a 
-                href="#news" 
+              </Link>
+              <Link 
+                href="/#news" 
                 className="text-slate-300 hover:text-cyan-400 py-2 text-lg font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 新闻动态
-              </a>
-              <a 
-                href="#about" 
+              </Link>
+              <Link 
+                href="/about" 
                 className="text-slate-300 hover:text-cyan-400 py-2 text-lg font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 关于我们
-              </a>
-              <a 
-                href="#contact" 
+              </Link>
+              <Link 
+                href="/#contact" 
                 className="text-cyan-400 font-medium py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 联系我们 →
-              </a>
+              </Link>
             </div>
           </motion.div>
         )}
