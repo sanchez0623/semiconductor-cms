@@ -8,7 +8,7 @@ export default function AboutPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-20">
+      <main className="min-h-screen bg-slate-950 dark:bg-slate-950 pt-20">
         {/* Hero Section */}
         <section className="relative py-24 overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-cyan-500/10 via-slate-50/0 to-slate-50/0 dark:from-cyan-900/20 dark:via-slate-950/0 dark:to-slate-950/0 -z-10" />
