@@ -1,17 +1,27 @@
 // app/(dashboard)/layout.tsx
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { 
-  LayoutDashboard, 
-  Newspaper, 
-  Package, 
-  MessageSquare, 
-  FileText, 
-  LogOut 
+import { createClient as createServerSupabaseClient } from "@/lib/supabase/server";
+import {
+  LayoutDashboard,
+  Newspaper,
+  Package,
+  MessageSquare,
+  FileText,
+  LogOut,
 } from "lucide-react";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
+  const handleLogout = async () => {
+    "use server";
+
+    const supabase = await createServerSupabaseClient();
+    await supabase.auth.signOut();
+    redirect("/auth/login");
+  };
+
   return (
     <div className="min-h-screen flex bg-gray-50 text-gray-900">
       {/* 侧边栏：深色收敛视觉 */}
@@ -46,9 +56,16 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <h1 className="text-base font-medium text-gray-700">管理控制台</h1>
           <div className="flex items-center gap-4">
              <span className="text-sm text-gray-500">管理员</span>
-             <Button variant="ghost" size="sm" className="text-red-600 hover:bg-red-50 hover:text-red-700">
-               <LogOut className="w-4 h-4 mr-2" /> 退出
-             </Button>
+             <form action={handleLogout}>
+               <Button
+                 type="submit"
+                 variant="ghost"
+                 size="sm"
+                 className="text-red-600 hover:bg-red-50 hover:text-red-700"
+               >
+                 <LogOut className="w-4 h-4 mr-2" /> 退出
+               </Button>
+             </form>
           </div>
         </header>
 
