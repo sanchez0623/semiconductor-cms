@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Pagination } from "../_components/Pagination";
 import { LoadingSpinner } from "../_components/LoadingSpinner";
 import { ErrorMessage } from "../_components/ErrorMessage";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface QuoteForm {
   id: string;
@@ -35,6 +36,10 @@ export function QuoteFormsTable() {
   const [error, setError] = useState<string | null>(null);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "handled" | "unhandled">("all");
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    id: string | null;
+  }>({ isOpen: false, id: null });
 
   const fetchData = async (page: number) => {
     setIsLoading(true);
@@ -79,10 +84,13 @@ export function QuoteFormsTable() {
     setFilter(e.target.value as "all" | "handled" | "unhandled");
   };
 
-  const handleMarkAsHandled = async (id: string) => {
-    if (!confirm("确定要将此条目标记为已处理吗？")) {
-      return;
-    }
+  const handleMarkAsHandled = (id: string) => {
+    setConfirmDialog({ isOpen: true, id });
+  };
+
+  const confirmHandle = async () => {
+    const id = confirmDialog.id;
+    if (!id) return;
 
     setProcessingId(id);
     try {
@@ -103,6 +111,7 @@ export function QuoteFormsTable() {
           item.id === id ? { ...item, handled: true } : item
         )
       );
+      setConfirmDialog({ isOpen: false, id: null });
     } catch (err) {
       console.error("Error updating status:", err);
       alert("Failed to update status");
@@ -113,6 +122,14 @@ export function QuoteFormsTable() {
 
   return (
     <div className="space-y-4">
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        onClose={() => setConfirmDialog({ isOpen: false, id: null })}
+        onConfirm={confirmHandle}
+        title="确认处理"
+        description="确定要将此条目标记为已处理吗？此操作不可撤销。"
+        isLoading={!!processingId}
+      />
       <div className="flex justify-end">
         <select
           value={filter}
