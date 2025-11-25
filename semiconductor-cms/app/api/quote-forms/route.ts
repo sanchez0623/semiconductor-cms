@@ -72,3 +72,40 @@ export async function GET(req: Request) {
     );
   }
 }
+
+export async function PATCH(req: Request) {
+  try {
+    const body = await req.json();
+    const { id, handled } = body;
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "Missing required field: id" },
+        { status: 400 }
+      );
+    }
+
+    const supabase = await createClient();
+
+    const { error } = await supabase
+      .from("quote_forms")
+      .update({ handled })
+      .eq("id", id);
+
+    if (error) {
+      console.error("Supabase update error (quote_forms):", error);
+      return NextResponse.json(
+        { error: "Failed to update quote form" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error("Quote Forms API error:", err);
+    return NextResponse.json(
+      { error: "Server error, please try again later" },
+      { status: 500 }
+    );
+  }
+}

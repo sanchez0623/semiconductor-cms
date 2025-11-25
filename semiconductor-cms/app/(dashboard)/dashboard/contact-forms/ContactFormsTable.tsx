@@ -12,6 +12,7 @@ interface ContactForm {
   subject?: string;
   message: string;
   created_at: string;
+  handled?: boolean;
 }
 
 interface PaginationInfo {
@@ -31,6 +32,7 @@ export function ContactFormsTable() {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [processingId, setProcessingId] = useState<string | null>(null);
 
   const fetchData = async (page: number) => {
     setIsLoading(true);
@@ -64,6 +66,34 @@ export function ContactFormsTable() {
 
   const handlePageChange = (page: number) => {
     fetchData(page);
+  };
+
+  const handleMarkAsHandled = async (id: string) => {
+    setProcessingId(id);
+    try {
+      const response = await fetch("/api/contact-forms", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id, handled: true }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update status");
+      }
+
+      setData((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, handled: true } : item
+        )
+      );
+    } catch (err) {
+      console.error("Error updating status:", err);
+      alert("Failed to update status");
+    } finally {
+      setProcessingId(null);
+    }
   };
 
   if (isLoading && data.length === 0) {
@@ -103,6 +133,12 @@ export function ContactFormsTable() {
               <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Submitted
               </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                Status
+              </th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200">
@@ -125,6 +161,28 @@ export function ContactFormsTable() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
                   {new Date(form.created_at).toLocaleString("zh-CN")}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  {form.handled ? (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      已处理
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                      未处理
+                    </span>
+                  )}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  {!form.handled && (
+                    <button
+                      onClick={() => handleMarkAsHandled(form.id)}
+                      disabled={processingId === form.id}
+                      className="text-indigo-600 hover:text-indigo-900 disabled:opacity-50"
+                    >
+                      {processingId === form.id ? "处理中..." : "处理"}
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
