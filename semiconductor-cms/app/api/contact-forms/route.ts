@@ -104,16 +104,24 @@ export async function PATCH(req: Request) {
 
     const supabase = await createClient();
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("contact_forms")
       .update({ handled })
-      .eq("id", id);
+      .eq("id", id)
+      .select();
 
     if (error) {
       console.error("Supabase update error (contact_forms):", error);
       return NextResponse.json(
         { error: "Failed to update contact form" },
         { status: 500 }
+      );
+    }
+
+    if (!data || data.length === 0) {
+      return NextResponse.json(
+        { error: "Contact form not found or update failed" },
+        { status: 404 }
       );
     }
 

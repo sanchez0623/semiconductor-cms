@@ -80,6 +80,10 @@ export function QuoteFormsTable() {
   };
 
   const handleMarkAsHandled = async (id: string) => {
+    if (!confirm("确定要将此条目标记为已处理吗？")) {
+      return;
+    }
+
     setProcessingId(id);
     try {
       const response = await fetch("/api/quote-forms", {
