@@ -163,3 +163,31 @@ export async function getNewsBySlug(slug: string): Promise<NotionNewsItem | null
     publishedAt: publishedAt || undefined
   };
 }
+
+// 🆕 获取已发布 news 总数（优化：只遍历计数，不处理内容）
+export async function getNewsCount(): Promise<number> {
+  if (!NOTION_NEWS_DB_ID) return 0;
+
+  const dataSourceId = await getDatabaseDataSourceId(NOTION_NEWS_DB_ID);
+  let count = 0;
+  let hasMore = true;
+  let nextCursor: string | undefined = undefined;
+
+  while (hasMore) {
+    const response = await notion.dataSources.query({
+      data_source_id: dataSourceId,
+      filter: {
+        property: "is_published",
+        checkbox: { equals: true },
+      },
+      page_size: 100, // Max page size
+      start_cursor: nextCursor,
+    });
+
+    count += response.results.length;
+    hasMore = response.has_more;
+    nextCursor = response.next_cursor || undefined;
+  }
+
+  return count;
+}

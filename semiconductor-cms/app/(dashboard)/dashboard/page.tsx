@@ -1,8 +1,8 @@
 // app/(dashboard)/dashboard/page.tsx
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { getAllNews } from "@/lib/notion/notion-news";
-import { getAllProducts } from "@/lib/notion/notion-products";
+import { getNewsCount } from "@/lib/notion/notion-news";
+import { getProductsCount } from "@/lib/notion/notion-products";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -18,19 +18,21 @@ export default async function DashboardPage() {
     redirect(`/auth/login?redirect=${encodeURIComponent("/dashboard")}`);
   }
 
-  // Fetch data
-  const news = await getAllNews();
-  const products = await getAllProducts();
-
-  const { count: unreadContactForms } = await supabase
-    .from("contact_forms")
-    .select("*", { count: "exact", head: true })
-    .not("handled", "eq", true);
-
-  const { count: unhandledQuoteForms } = await supabase
-    .from("quote_forms")
-    .select("*", { count: "exact", head: true })
-    .not("handled", "eq", true);
+  // Fetch data in parallel
+  const [newsCount, productsCount, unreadContactForms, unhandledQuoteForms] = await Promise.all([
+    getNewsCount(),
+    getProductsCount(),
+    supabase
+      .from("contact_forms")
+      .select("*", { count: "exact", head: true })
+      .not("handled", "eq", true)
+      .then(({ count }) => count),
+    supabase
+      .from("quote_forms")
+      .select("*", { count: "exact", head: true })
+      .not("handled", "eq", true)
+      .then(({ count }) => count),
+  ]);
 
   return (
     <main className="p-6">
@@ -48,11 +50,11 @@ export default async function DashboardPage() {
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         <div className="bg-white rounded-lg border border-slate-200 p-4">
           <p className="text-xs text-slate-500">新闻数量</p>
-          <p className="text-2xl font-semibold mt-2">{news.length}</p>
+          <p className="text-2xl font-semibold mt-2">{newsCount}</p>
         </div>
         <div className="bg-white rounded-lg border border-slate-200 p-4">
           <p className="text-xs text-slate-500">产品数量</p>
-          <p className="text-2xl font-semibold mt-2">{products.length}</p>
+          <p className="text-2xl font-semibold mt-2">{productsCount}</p>
         </div>
         <div className="bg-white rounded-lg border border-slate-200 p-4">
           <p className="text-xs text-slate-500">未读联系表单</p>

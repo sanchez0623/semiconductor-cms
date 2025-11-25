@@ -12,6 +12,7 @@ export async function GET(req: Request) {
       searchParams.get("pageSize") || String(DEFAULT_PAGE_SIZE),
       10
     );
+    const handled = searchParams.get("handled");
 
     if (page < 1 || pageSize < 1 || pageSize > 100) {
       return NextResponse.json(
@@ -23,9 +24,17 @@ export async function GET(req: Request) {
     const supabase = await createClient();
 
     // Get total count
-    const { count, error: countError } = await supabase
+    let query = supabase
       .from("contact_forms")
       .select("*", { count: "exact", head: true });
+
+    if (handled === "true") {
+      query = query.eq("handled", true);
+    } else if (handled === "false") {
+      query = query.not("handled", "eq", true);
+    }
+
+    const { count, error: countError } = await query;
 
     if (countError) {
       console.error("Supabase count error (contact_forms):", countError);
@@ -39,11 +48,19 @@ export async function GET(req: Request) {
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
-    const { data, error } = await supabase
+    let dataQuery = supabase
       .from("contact_forms")
       .select("*")
       .order("created_at", { ascending: false })
       .range(from, to);
+
+    if (handled === "true") {
+      dataQuery = dataQuery.eq("handled", true);
+    } else if (handled === "false") {
+      dataQuery = dataQuery.not("handled", "eq", true);
+    }
+
+    const { data, error } = await dataQuery;
 
     if (error) {
       console.error("Supabase select error (contact_forms):", error);

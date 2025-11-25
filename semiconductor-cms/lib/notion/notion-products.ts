@@ -189,3 +189,31 @@ export async function getProductBySlug(
     category,
   };
 }
+
+// 🆕 获取可见产品总数（优化：只遍历计数）
+export async function getProductsCount(): Promise<number> {
+  if (!NOTION_PRODUCTS_DB_ID) return 0;
+
+  const dataSourceId = await getDatabaseDataSourceId(NOTION_PRODUCTS_DB_ID);
+  let count = 0;
+  let hasMore = true;
+  let nextCursor: string | undefined = undefined;
+
+  while (hasMore) {
+    const response = await notion.dataSources.query({
+      data_source_id: dataSourceId,
+      filter: {
+        property: "is_active",
+        checkbox: { equals: true },
+      },
+      page_size: 100,
+      start_cursor: nextCursor,
+    });
+
+    count += response.results.length;
+    hasMore = response.has_more;
+    nextCursor = response.next_cursor || undefined;
+  }
+
+  return count;
+}

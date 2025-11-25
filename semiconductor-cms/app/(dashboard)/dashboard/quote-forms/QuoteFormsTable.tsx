@@ -34,15 +34,21 @@ export function QuoteFormsTable() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const [filter, setFilter] = useState<"all" | "handled" | "unhandled">("all");
 
   const fetchData = async (page: number) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(
-        `/api/quote-forms?page=${page}&pageSize=${pagination.pageSize}`
-      );
+      let url = `/api/quote-forms?page=${page}&pageSize=${pagination.pageSize}`;
+      if (filter === "handled") {
+        url += "&handled=true";
+      } else if (filter === "unhandled") {
+        url += "&handled=false";
+      }
+
+      const response = await fetch(url);
 
       if (!response.ok) {
         throw new Error("Failed to fetch quote forms");
@@ -63,10 +69,14 @@ export function QuoteFormsTable() {
   useEffect(() => {
     fetchData(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [filter]);
 
   const handlePageChange = (page: number) => {
     fetchData(page);
+  };
+
+  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFilter(e.target.value as "all" | "handled" | "unhandled");
   };
 
   const handleMarkAsHandled = async (id: string) => {
@@ -97,113 +107,121 @@ export function QuoteFormsTable() {
     }
   };
 
-  if (isLoading && data.length === 0) {
-    return <LoadingSpinner />;
-  }
-
-  if (error && data.length === 0) {
-    return <ErrorMessage message={error} onRetry={() => fetchData(1)} />;
-  }
-
-  if (data.length === 0) {
-    return (
-      <div className="text-center py-12 text-slate-500">
-        No quote forms found
-      </div>
-    );
-  }
-
   return (
-    <div className="bg-white rounded-lg border border-slate-200">
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-slate-50 border-b border-slate-200">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                Email
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                Company
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                Product ID
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                Details
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                Submitted
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-200">
-            {data.map((form) => (
-              <tr
-                key={form.id}
-                className="hover:bg-slate-50 transition-colors"
-              >
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
-                  {form.name}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                  {form.email}
-                </td>
-                <td className="px-6 py-4 text-sm text-slate-600">
-                  {form.company || "—"}
-                </td>
-                <td className="px-6 py-4 text-sm text-slate-600">
-                  {form.product_id || "—"}
-                </td>
-                <td className="px-6 py-4 text-sm text-slate-600 max-w-md truncate">
-                  {form.details || "—"}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
-                  {new Date(form.created_at).toLocaleString("zh-CN")}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
-                  {form.handled ? (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      已处理
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                      未处理
-                    </span>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  {!form.handled && (
-                    <button
-                      onClick={() => handleMarkAsHandled(form.id)}
-                      disabled={processingId === form.id}
-                      className="text-indigo-600 hover:text-indigo-900 disabled:opacity-50"
-                    >
-                      {processingId === form.id ? "处理中..." : "处理"}
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <select
+          value={filter}
+          onChange={handleFilterChange}
+          className="block w-40 rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+        >
+          <option value="all">全部</option>
+          <option value="unhandled">未处理</option>
+          <option value="handled">已处理</option>
+        </select>
       </div>
 
-      {pagination.totalPages > 1 && (
-        <Pagination
-          currentPage={pagination.page}
-          totalPages={pagination.totalPages}
-          onPageChange={handlePageChange}
-          isLoading={isLoading}
-        />
+      {isLoading && data.length === 0 ? (
+        <LoadingSpinner />
+      ) : error && data.length === 0 ? (
+        <ErrorMessage message={error} onRetry={() => fetchData(1)} />
+      ) : data.length === 0 ? (
+        <div className="text-center py-12 text-slate-500 bg-white rounded-lg border border-slate-200">
+          No quote forms found
+        </div>
+      ) : (
+        <div className="bg-white rounded-lg border border-slate-200">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-slate-50 border-b border-slate-200">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-24">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-24">
+                    Actions
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    Name
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    Email
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    Company
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    Product ID
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    Details
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    Submitted
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200">
+                {data.map((form) => (
+                  <tr
+                    key={form.id}
+                    className="hover:bg-slate-50 transition-colors"
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      {form.handled ? (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          已处理
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                          未处理
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      {!form.handled && (
+                        <button
+                          onClick={() => handleMarkAsHandled(form.id)}
+                          disabled={processingId === form.id}
+                          className="text-indigo-600 hover:text-indigo-900 disabled:opacity-50 transition-transform hover:scale-105 active:scale-95"
+                        >
+                          {processingId === form.id ? "处理中..." : "处理"}
+                        </button>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
+                      {form.name}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                      {form.email}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-slate-600">
+                      {form.company || "—"}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-slate-600">
+                      {form.product_id || "—"}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-slate-600 max-w-md truncate" title={form.details}>
+                      {form.details || "—"}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                      {new Date(form.created_at).toLocaleString("zh-CN")}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {pagination.totalPages > 1 && (
+            <Pagination
+              currentPage={pagination.page}
+              totalPages={pagination.totalPages}
+              onPageChange={handlePageChange}
+              isLoading={isLoading}
+            />
+          )}
+        </div>
       )}
     </div>
   );
