@@ -1,4 +1,5 @@
 // lib/notion-products.ts
+import { isFullDatabase } from "@notionhq/client";
 import { notion, NOTION_PRODUCTS_DB_ID, getDatabaseDataSourceId } from "./notion";
 
 export type NotionProduct = {
@@ -31,6 +32,7 @@ export async function getProductsPaginated(options?: {
   pageSize?: number;
   startCursor?: string;
   category?: string; // 可选：按分类筛选
+  search?: string; // 可选：按名称模糊搜索
 }): Promise<PaginatedProductsResponse> {
   if (!NOTION_PRODUCTS_DB_ID) {
     return {
@@ -53,10 +55,18 @@ export async function getProductsPaginated(options?: {
   ];
 
   // 如果指定了分类，添加分类过滤
-  if (options?.category) {
+  if (options?.category && options.category !== "all") {
     filters.push({
       property: "category",
       select: { equals: options.category },
+    });
+  }
+
+  // 如果指定了搜索关键词，添加名称模糊搜索
+  if (options?.search) {
+    filters.push({
+      property: "name",
+      title: { contains: options.search },
     });
   }
 
@@ -216,4 +226,28 @@ export async function getProductsCount(): Promise<number> {
   }
 
   return count;
+}
+
+// 🆕 获取产品分类列表（从数据库 Schema 获取）
+export async function getProductCategories(): Promise<string[]> {
+  if (!NOTION_PRODUCTS_DB_ID) return [];
+
+  try {
+    const response = await notion.databases.retrieve({
+      database_id: NOTION_PRODUCTS_DB_ID,
+    });
+
+    if (!isFullDatabase(response)) return [];
+
+    const properties = (response as any).properties;
+    const categoryProp = properties["category"];
+    
+    if (categoryProp && categoryProp.type === "select") {
+      return categoryProp.select.options.map((opt: any) => opt.name);
+    }
+  } catch (error) {
+    console.error("Error fetching product categories:", error);
+  }
+  
+  return [];
 }

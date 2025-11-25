@@ -1,9 +1,23 @@
 // app/(dashboard)/dashboard/products/page.tsx
 import Link from "next/link";
-import { getAllProducts } from "@/lib/notion/notion-products";
+import { getProductsPaginated, getProductCategories } from "@/lib/notion/notion-products";
+import { DashboardProductSearch } from "./_components/dashboard-product-search";
 
-export default async function ProductsListPage() {
-  const products = await getAllProducts();
+export default async function ProductsListPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const resolvedSearchParams = await searchParams;
+  const category = typeof resolvedSearchParams.category === "string" ? resolvedSearchParams.category : undefined;
+  const search = typeof resolvedSearchParams.search === "string" ? resolvedSearchParams.search : undefined;
+
+  const [productsData, categories] = await Promise.all([
+    getProductsPaginated({ category, search, pageSize: 100 }),
+    getProductCategories(),
+  ]);
+
+  const products = productsData.items;
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-10">
@@ -11,6 +25,8 @@ export default async function ProductsListPage() {
       <p className="text-slate-600 mb-8">
         浏览全部半导体产品，支持按产品进入详情或提交询价。
       </p>
+
+      <DashboardProductSearch categories={categories} />
 
       {products.length === 0 ? (
         <p className="text-slate-500">暂无产品。</p>
