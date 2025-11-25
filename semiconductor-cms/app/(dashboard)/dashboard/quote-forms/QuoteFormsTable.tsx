@@ -117,7 +117,7 @@ export function QuoteFormsTable() {
         <select
           value={filter}
           onChange={handleFilterChange}
-          className="block w-40 rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+          className="block w-40 rounded-lg border-2 border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-all duration-200 hover:border-indigo-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none"
         >
           <option value="all">全部</option>
           <option value="unhandled">未处理</option>
@@ -130,55 +130,55 @@ export function QuoteFormsTable() {
       ) : error && data.length === 0 ? (
         <ErrorMessage message={error} onRetry={() => fetchData(1)} />
       ) : data.length === 0 ? (
-        <div className="text-center py-12 text-slate-500 bg-white rounded-lg border border-slate-200">
+        <div className="text-center py-12 text-slate-500 bg-gradient-to-br from-slate-50 to-white rounded-xl border-2 border-slate-200 shadow-sm">
           No quote forms found
         </div>
       ) : (
-        <div className="bg-white rounded-lg border border-slate-200">
+        <div className="bg-white rounded-xl border-2 border-slate-200 shadow-lg overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-slate-50 border-b border-slate-200">
+              <thead className="bg-gradient-to-r from-slate-50 via-indigo-50 to-slate-50 border-b-2 border-indigo-100">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-24">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider w-24">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-24">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider w-24">
                     Actions
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">
                     Name
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">
                     Email
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">
                     Company
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">
                     Product ID
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">
                     Details
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">
                     Submitted
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
+              <tbody className="divide-y divide-slate-100">
                 {data.map((form) => (
                   <tr
                     key={form.id}
-                    className="hover:bg-slate-50 transition-colors"
+                    className="hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-transparent transition-all duration-200 border-l-4 border-transparent hover:border-indigo-400"
                   >
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       {form.handled ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          已处理
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-emerald-100 to-green-100 text-green-700 shadow-sm">
+                          ✓ 已处理
                         </span>
                       ) : (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                          未处理
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-700 shadow-sm animate-pulse">
+                          ⚠ 未处理
                         </span>
                       )}
                     </td>
@@ -187,9 +187,24 @@ export function QuoteFormsTable() {
                         <button
                           onClick={() => handleMarkAsHandled(form.id)}
                           disabled={processingId === form.id}
-                          className="text-indigo-600 hover:text-indigo-900 disabled:opacity-50 transition-transform hover:scale-105 active:scale-95"
+                          className="relative inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-purple-600 shadow-md hover:shadow-lg hover:from-indigo-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2"
                         >
-                          {processingId === form.id ? "处理中..." : "处理"}
+                          {processingId === form.id ? (
+                            <>
+                              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                              处理中...
+                            </>
+                          ) : (
+                            <>
+                              <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                              处理
+                            </>
+                          )}
                         </button>
                       )}
                     </td>
