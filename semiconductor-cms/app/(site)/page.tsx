@@ -7,7 +7,6 @@ import dynamic from 'next/dynamic';
 
 const ContactForm = dynamic(() => import('@/components/contact-form').then(mod => mod.ContactForm), {
   loading: () => <div className="h-96 flex items-center justify-center text-slate-500">Loading contact form...</div>,
-  ssr: false // Optional: if you want to load it only on client side
 });
 
 import { getAllProducts } from "@/lib/notion/notion-products"; 
