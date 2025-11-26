@@ -9,8 +9,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useState } from "react";
-import { Search } from "lucide-react";
+import { useState, useTransition } from "react";
+import { Search, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface SiteProductSearchProps {
@@ -21,6 +21,7 @@ export function SiteProductSearch({ categories }: SiteProductSearchProps) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
+  const [isPending, startTransition] = useTransition();
 
   const [search, setSearch] = useState(searchParams.get("search") || "");
 
@@ -31,7 +32,18 @@ export function SiteProductSearch({ categories }: SiteProductSearchProps) {
     } else {
       params.delete("search");
     }
-    replace(`${pathname}?${params.toString()}`);
+    startTransition(() => {
+      replace(`${pathname}?${params.toString()}`);
+    });
+  };
+
+  const handleClear = () => {
+    setSearch("");
+    const params = new URLSearchParams(searchParams);
+    params.delete("search");
+    startTransition(() => {
+      replace(`${pathname}?${params.toString()}`);
+    });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -47,30 +59,45 @@ export function SiteProductSearch({ categories }: SiteProductSearchProps) {
     } else {
       params.delete("category");
     }
-    replace(`${pathname}?${params.toString()}`);
+    startTransition(() => {
+      replace(`${pathname}?${params.toString()}`);
+    });
   };
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 mb-8 max-w-2xl mx-auto">
-      <div className="flex-1 flex gap-2">
-        <Input
-          placeholder="搜索产品名称..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          onKeyDown={handleKeyDown}
-          className="bg-white/5 border-slate-800 text-white placeholder:text-slate-500 focus:border-cyan-500/50 focus:ring-cyan-500/20"
-        />
+      <div className="flex-1 flex gap-2 relative">
+        <div className="relative flex-1">
+          <Input
+            placeholder="搜索产品名称..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="bg-white/5 border-slate-800 text-white placeholder:text-slate-500 focus:border-cyan-500/50 focus:ring-cyan-500/20 pr-10"
+          />
+          {search && (
+            <button
+              onClick={handleClear}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+              type="button"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
         <Button 
           onClick={handleSearch}
-          className="bg-cyan-600 hover:bg-cyan-500 text-white"
+          disabled={isPending}
+          className="bg-cyan-600 hover:bg-cyan-500 text-white min-w-[3rem]"
         >
-          <Search className="w-4 h-4" />
+          {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
         </Button>
       </div>
       <div className="w-full sm:w-48">
         <Select
           defaultValue={searchParams.get("category") || "all"}
           onValueChange={handleCategoryChange}
+          disabled={isPending}
         >
           <SelectTrigger className="bg-white/5 border-slate-800 text-white focus:border-cyan-500/50 focus:ring-cyan-500/20">
             <SelectValue placeholder="选择分类" />
