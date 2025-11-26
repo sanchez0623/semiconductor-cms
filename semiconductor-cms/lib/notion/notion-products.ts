@@ -90,7 +90,8 @@ export async function getProductsPaginated(options?: {
     const slug = props["slug"]?.rich_text?.[0]?.plain_text ?? "";
     const description = getPlainText(props["description"]?.rich_text);
     const price = props["price"]?.number ?? null;
-    const category = props["category"]?.select?.name ?? "";
+    // 兼容 Select 和 Rich Text
+    const category = props["category"]?.select?.name ?? getPlainText(props["category"]?.rich_text) ?? "";
 
     return {
       id: page.id,
@@ -140,7 +141,7 @@ export async function getAllProducts(): Promise<NotionProduct[]> {
     const slug = props["slug"]?.rich_text?.[0]?.plain_text ?? "";
     const description = getPlainText(props["description"]?.rich_text);
     const price = props["price"]?.number ?? null;
-    const category = props["category"]?.select.name ?? "";
+    const category = props["category"]?.select?.name ?? getPlainText(props["category"]?.rich_text) ?? "";
 
     return {
       id: page.id,
@@ -187,7 +188,7 @@ export async function getProductBySlug(
   const name = getPlainText(props["name"]?.title);
   const description = getPlainText(props["description"]?.rich_text);
   const price = props["price"]?.number ?? null;
-  const category = props["category"]?.select.name ?? "";
+  const category = props["category"]?.select?.name ?? getPlainText(props["category"]?.rich_text) ?? "";
 
   return {
     id: page.id,
@@ -240,11 +241,22 @@ export async function getProductCategories(): Promise<string[]> {
     if (!isFullDatabase(response)) return [];
 
     const properties = (response as any).properties;
-    const categoryProp = properties["category"];
     
-    if (categoryProp && categoryProp.type === "select") {
-      return categoryProp.select.options.map((opt: any) => opt.name);
+    // 查找名为 category 的属性（忽略大小写）
+    const categoryKey = Object.keys(properties).find(
+      (key) => key.toLowerCase() === "category"
+    );
+
+    if (categoryKey) {
+      const categoryProp = properties[categoryKey];
+      if (categoryProp.type === "select") {
+        return categoryProp.select.options.map((opt: any) => opt.name);
+      }
     }
+
+    console.warn("Category property not found or not a select type in Notion database schema.");
+    return [];
+
   } catch (error) {
     console.error("Error fetching product categories:", error);
   }

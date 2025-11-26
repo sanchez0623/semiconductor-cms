@@ -9,7 +9,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface SiteProductSearchProps {
   categories: string[];
@@ -22,22 +24,21 @@ export function SiteProductSearch({ categories }: SiteProductSearchProps) {
 
   const [search, setSearch] = useState(searchParams.get("search") || "");
 
-  useEffect(() => {
-    const currentSearch = searchParams.get("search") || "";
-    if (search === currentSearch) return;
+  const handleSearch = () => {
+    const params = new URLSearchParams(searchParams);
+    if (search) {
+      params.set("search", search);
+    } else {
+      params.delete("search");
+    }
+    replace(`${pathname}?${params.toString()}`);
+  };
 
-    const timer = setTimeout(() => {
-      const params = new URLSearchParams(searchParams);
-      if (search) {
-        params.set("search", search);
-      } else {
-        params.delete("search");
-      }
-      replace(`${pathname}?${params.toString()}`);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [search, searchParams, pathname, replace]);
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
 
   const handleCategoryChange = (value: string) => {
     const params = new URLSearchParams(searchParams);
@@ -51,13 +52,20 @@ export function SiteProductSearch({ categories }: SiteProductSearchProps) {
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 mb-8 max-w-2xl mx-auto">
-      <div className="flex-1">
+      <div className="flex-1 flex gap-2">
         <Input
           placeholder="搜索产品名称..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={handleKeyDown}
           className="bg-white/5 border-slate-800 text-white placeholder:text-slate-500 focus:border-cyan-500/50 focus:ring-cyan-500/20"
         />
+        <Button 
+          onClick={handleSearch}
+          className="bg-cyan-600 hover:bg-cyan-500 text-white"
+        >
+          <Search className="w-4 h-4" />
+        </Button>
       </div>
       <div className="w-full sm:w-48">
         <Select
