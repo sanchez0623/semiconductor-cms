@@ -13,14 +13,15 @@ import {
 } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
-export default async function DashboardLayout({ children }: { children: ReactNode }) {
+export default async function DashboardLayout({ children, params }: { children: ReactNode; params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   const t = await getTranslations('DashboardLayout');
   const handleLogout = async () => {
     "use server";
 
     const supabase = await createServerSupabaseClient();
     await supabase.auth.signOut();
-    redirect("/auth/login");
+    redirect({ href: "/auth/login", locale });
   };
 
   return (
