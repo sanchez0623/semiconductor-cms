@@ -1,7 +1,8 @@
 // components/news-section.tsx
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { ArrowRight, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslations, useLocale } from "next-intl";
 
 type NewsItem = {
   id: string;
@@ -16,23 +17,27 @@ interface NewsSectionProps {
 }
 
 export function NewsSection({ news }: NewsSectionProps) {
+  const t = useTranslations('Home');
+  const tNews = useTranslations('NewsSection');
+  const locale = useLocale();
+
   return (
     <section className="py-24 bg-slate-950 relative border-t border-white/5" id="news">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
           <div className="inline-flex items-center justify-center px-3 py-1 mb-4 rounded-full bg-blue-500/10 border border-blue-500/20">
-            <span className="text-blue-400 text-xs font-bold tracking-wider uppercase">Latest News</span>
+            <span className="text-blue-400 text-xs font-bold tracking-wider uppercase">{t('latestNews')}</span>
           </div>
           <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-white">
-            新闻动态
+            {t('newsTitle')}
           </h2>
           <p className="text-xl text-slate-400 max-w-2xl mx-auto">
-            了解最新的行业资讯和公司动态
+            {t('newsDesc')}
           </p>
         </div>
 
         {news.length === 0 ? (
-          <p className="text-center text-slate-500">暂无新闻</p>
+          <p className="text-center text-slate-500">{t('noNews')}</p>
         ) : (
           // 只展示前 3 条新闻
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
@@ -46,13 +51,13 @@ export function NewsSection({ news }: NewsSectionProps) {
                   <div className="flex items-center gap-2 text-sm text-slate-500 mb-4">
                     <Calendar className="w-4 h-4" />
                     {item.publishedAt ? (
-                      new Date(item.publishedAt).toLocaleDateString("zh-CN", {
+                      new Date(item.publishedAt).toLocaleDateString(locale === 'zh' ? "zh-CN" : "en-US", {
                         year: "numeric",
                         month: "long",
                         day: "numeric",
                       })
                     ) : (
-                      "未知日期"
+                      t('unknownDate')
                     )}
                   </div>
                   
@@ -67,7 +72,7 @@ export function NewsSection({ news }: NewsSectionProps) {
                   )}
                   
                   <div className="flex items-center text-blue-500 font-medium group-hover:gap-2 transition-all mt-auto pt-4 border-t border-white/5">
-                    详情 {/* 文案改为详情 */}
+                    {tNews('readMore')}
                     <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
@@ -84,7 +89,7 @@ export function NewsSection({ news }: NewsSectionProps) {
             className="border-blue-500/30 text-blue-400 hover:bg-blue-500/10 hover:text-blue-300 bg-transparent rounded-full px-8"
           >
             <Link href="/news">
-              查看所有新闻 <ArrowRight className="ml-2 h-4 w-4" />
+              {t('viewAllNews')} <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
         </div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { useTranslations } from "next-intl";
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -20,6 +21,7 @@ export function ConfirmDialog({
   description,
   isLoading = false,
 }: ConfirmDialogProps) {
+  const t = useTranslations('Common');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -51,7 +53,7 @@ export function ConfirmDialog({
             disabled={isLoading}
             className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-200 transition-colors disabled:opacity-50"
           >
-            取消
+            {t('cancel')}
           </button>
           <button
             onClick={onConfirm}
@@ -80,7 +82,7 @@ export function ConfirmDialog({
                 ></path>
               </svg>
             )}
-            确认
+            {t('confirm')}
           </button>
         </div>
       </div>

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { ArrowRight, Cpu } from "lucide-react"
 import { motion } from "framer-motion"
 import Image from "next/image"
+import { useTranslations } from "next-intl"
 
 interface ProductCardProps {
   title: string
@@ -17,6 +18,8 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ title, description, image, category, featured, index = 0 }: ProductCardProps) {
+  const t = useTranslations('ProductCard');
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -42,7 +45,7 @@ export function ProductCard({ title, description, image, category, featured, ind
            
            {featured && (
              <Badge className="absolute top-4 right-4 z-20 bg-cyan-500/20 text-cyan-300 border-cyan-500/30 backdrop-blur-md">
-               旗舰新品
+               {t('featured')}
              </Badge>
            )}
         </div>
@@ -53,7 +56,7 @@ export function ProductCard({ title, description, image, category, featured, ind
           <p className="text-slate-400 text-sm leading-relaxed mb-6 line-clamp-2">{description}</p>
           
           <div className="flex items-center text-sm font-medium text-white/60 group-hover:text-white transition-colors">
-            了解详情 <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform text-cyan-500" />
+            {t('learnMore')} <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform text-cyan-500" />
           </div>
         </div>
       </div>

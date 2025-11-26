@@ -3,8 +3,11 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Cpu } from "lucide-react"
 import { motion } from "framer-motion"
+import { useTranslations } from "next-intl"
 
 export function HeroSection() {
+  const t = useTranslations('Hero');
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-950">
       {/* 动态电路网格背景 */}
@@ -27,7 +30,7 @@ export function HeroSection() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
             </span>
-            <span className="text-xs font-medium text-cyan-100 tracking-wide uppercase">Next Gen Semiconductor</span>
+            <span className="text-xs font-medium text-cyan-100 tracking-wide uppercase">{t('badge')}</span>
           </motion.div>
 
           {/* 主标题 */}
@@ -37,9 +40,9 @@ export function HeroSection() {
             transition={{ delay: 0.2 }}
             className="text-5xl sm:text-7xl font-bold tracking-tight text-white mb-8 leading-[1.1]"
           >
-            赋能未来的 <br />
+            {t('titlePrefix')} <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
-              智能芯片架构
+              {t('titleHighlight')}
             </span>
           </motion.h1>
 
@@ -50,8 +53,7 @@ export function HeroSection() {
             transition={{ delay: 0.3 }}
             className="text-lg sm:text-xl text-slate-400 mb-10 max-w-2xl leading-relaxed"
           >
-            我们致力于打造极致性能与能效比的半导体解决方案，
-            为人工智能、云计算及边缘计算提供坚实的算力基石。
+            {t('description')}
           </motion.p>
 
           {/* 按钮组 */}
@@ -65,7 +67,7 @@ export function HeroSection() {
               size="lg"
               className="bg-cyan-600 hover:bg-cyan-500 text-white border-0 shadow-[0_0_30px_-10px_rgba(6,182,212,0.6)] transition-all duration-300 px-8 h-12 text-base rounded-full"
             >
-              探索解决方案
+              {t('explore')}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
             <Button
@@ -74,7 +76,7 @@ export function HeroSection() {
               className="border-white/10 bg-white/5 text-white hover:bg-white/10 hover:text-cyan-300 backdrop-blur-sm h-12 px-8 text-base rounded-full"
             >
               <Cpu className="mr-2 h-4 w-4" />
-              技术文档
+              {t('docs')}
             </Button>
           </motion.div>
         </div>
