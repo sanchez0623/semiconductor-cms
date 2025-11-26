@@ -1,7 +1,9 @@
 import { HeroSection } from "@/components/hero-section";
 import { FeaturesSection } from "@/components/features-section";
 import { ProductCard } from "@/components/product-card";
+import { NewsSection } from "@/components/news-section";
 import { ArrowRight } from "lucide-react"; // 引入图标
+import dynamic from 'next/dynamic';
 
 const ContactForm = dynamic(() => import('@/components/contact-form').then(mod => mod.ContactForm), {
   loading: () => <div className="h-96 flex items-center justify-center text-slate-500">Loading contact form...</div>,
