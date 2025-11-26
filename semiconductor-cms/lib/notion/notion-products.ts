@@ -234,14 +234,15 @@ export async function getProductCategories(): Promise<string[]> {
   if (!NOTION_PRODUCTS_DB_ID) return [];
 
   try {
-    const response = await notion.databases.retrieve({
-      database_id: NOTION_PRODUCTS_DB_ID,
+    const dataSourceId = await getDatabaseDataSourceId(NOTION_PRODUCTS_DB_ID);
+    const response = await notion.dataSources.retrieve({
+      data_source_id: dataSourceId,
     });
 
-    if (!isFullDatabase(response)) return [];
+    // if (!isFullDatabase(response)) return [];
 
     const properties = (response as any).properties;
-    
+    console.log("Database properties:", properties);
     // 查找名为 category 的属性（忽略大小写）
     const categoryKey = Object.keys(properties).find(
       (key) => key.toLowerCase() === "category"
@@ -249,7 +250,8 @@ export async function getProductCategories(): Promise<string[]> {
 
     if (categoryKey) {
       const categoryProp = properties[categoryKey];
-      if (categoryProp.type === "select") {
+      // 如果是 Select 类型且有选项，直接返回
+      if (categoryProp.type === "select" && categoryProp.select.options.length > 0) {
         return categoryProp.select.options.map((opt: any) => opt.name);
       }
     }
