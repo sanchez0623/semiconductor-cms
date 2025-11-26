@@ -7,10 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Send, CheckCircle2, AlertCircle } from "lucide-react";
-import { useTranslations } from "next-intl";
 
 export default function HomeContactSection() {
-  const t = useTranslations('Contact');
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -43,13 +41,13 @@ export default function HomeContactSection() {
 
       const json = await res.json();
       if (!res.ok) {
-        throw new Error(json.error || t('error'));
+        throw new Error(json.error || "提交失败");
       }
 
-      setSuccess(t('success'));
+      setSuccess("提交成功，我们会尽快联系你。");
       setForm({ name: "", email: "", subject: "", message: "" });
     } catch (err: any) {
-      setError(err.message ?? t('error'));
+      setError(err.message ?? "服务器错误，请稍后重试。");
     } finally {
       setLoading(false);
     }
@@ -75,7 +73,7 @@ export default function HomeContactSection() {
 
       <div className="space-y-2">
         <Label htmlFor="name" className="text-slate-100">
-          {t('name')} *
+          姓名 *
         </Label>
         <Input
           id="name"
@@ -83,14 +81,14 @@ export default function HomeContactSection() {
           value={form.name}
           onChange={handleChange}
           required
-          placeholder={t('namePlaceholder')}
+          placeholder="请输入您的姓名"
           className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400 focus:border-blue-500"
         />
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="email" className="text-slate-100">
-          {t('email')} *
+          邮箱 *
         </Label>
         <Input
           id="email"
@@ -99,28 +97,28 @@ export default function HomeContactSection() {
           value={form.email}
           onChange={handleChange}
           required
-          placeholder={t('emailPlaceholder')}
+          placeholder="your@email.com"
           className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400 focus:border-blue-500"
         />
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="subject" className="text-slate-100">
-          {t('subject')}
+          主题
         </Label>
         <Input
           id="subject"
           name="subject"
           value={form.subject}
           onChange={handleChange}
-          placeholder={t('subjectPlaceholder')}
+          placeholder="咨询主题（可选）"
           className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400 focus:border-blue-500"
         />
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="message" className="text-slate-100">
-          {t('message')} *
+          留言 *
         </Label>
         <Textarea
           id="message"
@@ -129,7 +127,7 @@ export default function HomeContactSection() {
           onChange={handleChange}
           required
           rows={4}
-          placeholder={t('messagePlaceholder')}
+          placeholder="请描述您的需求..."
           className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400 focus:border-blue-500 resize-none"
         />
       </div>
@@ -157,11 +155,11 @@ export default function HomeContactSection() {
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               />
             </svg>
-            {t('submitting')}
+            提交中...
           </span>
         ) : (
           <span className="flex items-center justify-center gap-2">
-            {t('submit')}
+            发送消息
             <Send className="w-4 h-4" />
           </span>
         )}

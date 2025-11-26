@@ -13,11 +13,11 @@ import { useState, useTransition } from "react";
 import { Search, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-interface SiteProductSearchProps {
+interface DashboardProductSearchProps {
   categories: string[];
 }
 
-export function SiteProductSearch({ categories }: SiteProductSearchProps) {
+export function DashboardProductSearch({ categories }: DashboardProductSearchProps) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -65,20 +65,20 @@ export function SiteProductSearch({ categories }: SiteProductSearchProps) {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 mb-8 max-w-2xl mx-auto">
-      <div className="flex-1 flex gap-2 relative">
+    <div className="flex flex-col sm:flex-row gap-4 mb-6">
+      <div className="flex-1 max-w-sm flex gap-2 relative">
         <div className="relative flex-1">
           <Input
             placeholder="搜索产品名称..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="bg-white/5 border-slate-800 text-white placeholder:text-slate-500 focus:border-cyan-500/50 focus:ring-cyan-500/20 pr-10"
+            className="bg-white pr-10"
           />
           {search && (
             <button
               onClick={handleClear}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
               type="button"
             >
               <X className="w-4 h-4" />
@@ -86,9 +86,10 @@ export function SiteProductSearch({ categories }: SiteProductSearchProps) {
           )}
         </div>
         <Button 
-          onClick={handleSearch}
+          onClick={handleSearch} 
+          variant="secondary"
           disabled={isPending}
-          className="bg-cyan-600 hover:bg-cyan-500 text-white min-w-[3rem]"
+          className="min-w-[3rem]"
         >
           {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
         </Button>
@@ -99,10 +100,10 @@ export function SiteProductSearch({ categories }: SiteProductSearchProps) {
           onValueChange={handleCategoryChange}
           disabled={isPending}
         >
-          <SelectTrigger className="bg-white/5 border-slate-800 text-white focus:border-cyan-500/50 focus:ring-cyan-500/20">
+          <SelectTrigger className="bg-white">
             <SelectValue placeholder="选择分类" />
           </SelectTrigger>
-          <SelectContent className="bg-slate-900 border-slate-800 text-slate-300">
+          <SelectContent>
             <SelectItem value="all">所有分类</SelectItem>
             {categories.map((cat) => (
               <SelectItem key={cat} value={cat}>

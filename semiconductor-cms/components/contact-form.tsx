@@ -8,11 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle } from "lucide-react"
 import { motion } from "framer-motion"
-import { useTranslations } from "next-intl"
 
 export function ContactForm() {
-  const t = useTranslations('Contact');
-  const tFooter = useTranslations('Footer'); // Reuse address from Footer
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -46,13 +43,13 @@ export function ContactForm() {
       const json = await res.json()
       
       if (!res.ok) {
-        throw new Error(json.error || t('error'))
+        throw new Error(json.error || "提交失败")
       }
 
-      setSuccess(t('success'))
+      setSuccess("提交成功，我们会尽快与您联系！")
       setForm({ name: "", email: "", subject: "", message: "" })
     } catch (err: any) {
-      setError(err.message ?? t('error'))
+      setError(err.message ?? "服务器错误，请稍后重试。")
     } finally {
       setIsSubmitting(false)
     }
@@ -70,10 +67,10 @@ export function ContactForm() {
             viewport={{ once: true }}
           >
             <h2 className="text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
-              {tFooter('contact')}
+              联系我们
             </h2>
             <p className="text-xl text-slate-600 dark:text-slate-400 mb-12">
-              {t('subjectPlaceholder')}
+              有任何问题或需求？我们随时为您服务
             </p>
 
             <div className="space-y-8">
@@ -82,7 +79,7 @@ export function ContactForm() {
                   <Mail className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-lg mb-1 text-slate-900 dark:text-white">{t('email')}</h3>
+                  <h3 className="font-semibold text-lg mb-1 text-slate-900 dark:text-white">邮箱</h3>
                   <p className="text-slate-600 dark:text-slate-400">contact@semiconductor.com</p>
                 </div>
               </div>
@@ -103,7 +100,7 @@ export function ContactForm() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg mb-1 text-slate-900 dark:text-white">地址</h3>
-                  <p className="text-slate-600 dark:text-slate-400">{tFooter('address')}</p>
+                  <p className="text-slate-600 dark:text-slate-400">中国上海市浦东新区科技园区</p>
                 </div>
               </div>
             </div>
@@ -118,8 +115,8 @@ export function ContactForm() {
           >
             <Card className="border-0 shadow-2xl">
               <CardHeader>
-                <CardTitle className="text-2xl">{t('submit')}</CardTitle>
-                <CardDescription>{t('messagePlaceholder')}</CardDescription>
+                <CardTitle className="text-2xl">发送消息</CardTitle>
+                <CardDescription>请填写以下信息，我们会尽快与您联系</CardDescription>
               </CardHeader>
               <CardContent>
                 {/* 成功提示 */}
@@ -141,23 +138,23 @@ export function ContactForm() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">{t('name')} *</Label>
+                      <Label htmlFor="name">姓名 *</Label>
                       <Input 
                         id="name" 
                         name="name"
-                        placeholder={t('namePlaceholder')} 
+                        placeholder="张三" 
                         required 
                         value={form.name}
                         onChange={handleChange}
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email">{t('email')} *</Label>
+                      <Label htmlFor="email">邮箱 *</Label>
                       <Input 
                         id="email" 
                         name="email"
                         type="email" 
-                        placeholder={t('emailPlaceholder')} 
+                        placeholder="zhangsan@example.com" 
                         required 
                         value={form.email}
                         onChange={handleChange}
@@ -166,22 +163,22 @@ export function ContactForm() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="subject">{t('subject')}</Label>
+                    <Label htmlFor="subject">主题</Label>
                     <Input 
                       id="subject" 
                       name="subject"
-                      placeholder={t('subjectPlaceholder')} 
+                      placeholder="咨询主题（可选）" 
                       value={form.subject}
                       onChange={handleChange}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="message">{t('message')} *</Label>
+                    <Label htmlFor="message">留言 *</Label>
                     <Textarea
                       id="message"
                       name="message"
-                      placeholder={t('messagePlaceholder')}
+                      placeholder="请详细描述您的需求..."
                       rows={6}
                       required
                       value={form.message}
@@ -212,11 +209,11 @@ export function ContactForm() {
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                           />
                         </svg>
-                        {t('submitting')}
+                        发送中...
                       </span>
                     ) : (
                       <>
-                        {t('submit')}
+                        发送消息
                         <Send className="ml-2 h-5 w-5" />
                       </>
                     )}

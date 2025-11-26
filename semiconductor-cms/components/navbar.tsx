@@ -4,12 +4,9 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Link } from "@/i18n/routing"
-import { useTranslations } from "next-intl"
-import { LanguageSwitcher } from "@/components/language-switcher"
+import Link from "next/link" // ✅ 引入 Link
 
 export function Navbar() {
-  const t = useTranslations('Navigation');
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
@@ -52,33 +49,31 @@ export function Navbar() {
           {/* Desktop Navigation (Center - Absolute Position) */}
           <div className="hidden lg:flex items-center gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             <Link href="/#products" className={linkClass}>
-              {t('products')}
+              产品中心
               {activeIndicator}
             </Link>
             <Link href="/#news" className={linkClass}>
-              {t('news')}
+              新闻动态
               {activeIndicator}
             </Link>
             <Link href="/about" className={linkClass}> {/* ✅ 指向新页面 */}
-              {t('about')}
+              关于我们
               {activeIndicator}
             </Link>
           </div>
 
           {/* CTA Buttons (Right) */}
           <div className="hidden lg:flex items-center gap-4 z-20 relative">
-            <LanguageSwitcher />
             <Button 
                 asChild
                 className="bg-white/10 hover:bg-white/20 text-white border border-white/10 backdrop-blur-sm rounded-full px-6 shadow-[0_0_20px_-5px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.5)] transition-all duration-300"
                 >
-                <Link href="/#contact">{t('contact')}</Link>
+                <Link href="/#contact">联系我们</Link>
             </Button>
           </div>
 
           {/* Mobile menu button */}
-          <div className="lg:hidden z-20 relative ml-auto flex items-center gap-4">
-            <LanguageSwitcher />
+          <div className="lg:hidden z-20 relative ml-auto">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="text-white p-2 rounded-lg hover:bg-white/10 transition-colors"
@@ -104,28 +99,28 @@ export function Navbar() {
                 className="text-slate-300 hover:text-cyan-400 py-2 text-lg font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                {t('products')}
+                产品中心
               </Link>
               <Link 
                 href="/#news" 
                 className="text-slate-300 hover:text-cyan-400 py-2 text-lg font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                {t('news')}
+                新闻动态
               </Link>
               <Link 
                 href="/about" 
                 className="text-slate-300 hover:text-cyan-400 py-2 text-lg font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                {t('about')}
+                关于我们
               </Link>
               <Link 
                 href="/#contact" 
                 className="text-cyan-400 font-medium py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                {t('contact')} →
+                联系我们 →
               </Link>
             </div>
           </motion.div>
