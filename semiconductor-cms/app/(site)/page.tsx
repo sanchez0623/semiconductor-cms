@@ -1,13 +1,24 @@
 import { HeroSection } from "@/components/hero-section";
 import { FeaturesSection } from "@/components/features-section";
 import { ProductCard } from "@/components/product-card";
-import { ContactForm } from "@/components/contact-form";
-import { NewsSection } from "@/components/news-section";
+import { ArrowRight } from "lucide-react"; // 引入图标
+
+const ContactForm = dynamic(() => import('@/components/contact-form').then(mod => mod.ContactForm), {
+  loading: () => <div className="h-96 flex items-center justify-center text-slate-500">Loading contact form...</div>,
+  ssr: false // Optional: if you want to load it only on client side
+});
+
 import { getAllProducts } from "@/lib/notion/notion-products"; 
 import { getAllNews } from "@/lib/notion/notion-news";
 import Link from "next/link"; // 引入 Link
 import { Button } from "@/components/ui/button"; // 引入 Button
-import { ArrowRight } from "lucide-react"; // 引入图标
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "首页 - Semiconductor CMS",
+  description: "提供高品质的半导体解决方案，赋能您的创新。核心产品包括高性能、低功耗、工业级芯片。",
+  keywords: ["半导体", "芯片", "解决方案", "高性能", "工业级"],
+};
 
 export default async function HomePage() {
   const products = await getAllProducts(); 

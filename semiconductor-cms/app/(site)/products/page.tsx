@@ -4,6 +4,14 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { SiteProductSearch } from "@/components/site-product-search";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "产品中心 - Semiconductor CMS",
+  description:
+    "浏览全部半导体产品，支持按分类筛选和名称搜索。提供高性能、低功耗、工业级芯片解决方案。",
+  keywords: ["产品列表", "半导体产品", "芯片选型", "在线询价"],
+};
 
 export default async function ProductsListPage({
   searchParams,

@@ -5,6 +5,7 @@ import { getProductBySlug, getProductsPaginated } from "@/lib/notion/notion-prod
 import { ArrowLeft, Cpu, ShieldCheck, Zap, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Metadata } from "next";
 
 // 1. 缓存策略：1小时更新一次
 export const revalidate = 3600;
@@ -19,6 +20,24 @@ export async function generateStaticParams() {
   return items.map((product) => ({
     slug: product.slug,
   }));
+}
+
+// 4. 动态生成 SEO 元数据
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
+
+  if (!product) {
+    return {
+      title: "产品未找到",
+    };
+  }
+
+  return {
+    title: `${product.name} - 产品中心`,
+    description: product.description || `查看 ${product.name} 的详细参数和规格。`,
+    keywords: [product.name, product.category || "半导体", "芯片", "规格书"].filter(Boolean),
+  };
 }
 
 export default async function ProductDetailPage({

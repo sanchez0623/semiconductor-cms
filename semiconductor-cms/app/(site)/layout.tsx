@@ -9,7 +9,7 @@ export default function SiteLayout({
   return (
     <div className="relative min-h-screen flex flex-col bg-slate-950 text-slate-200 selection:bg-cyan-500/30 overflow-x-hidden">
       {/* 全局背景特效：深色噪点与微光 */}
-      <div className="fixed inset-0 bg-[url('/product-placeholder.png')] opacity-[0.03] pointer-events-none z-0 mix-blend-overlay"></div>
+      <div className="fixed inset-0 bg-[url('/product-placeholder.jpg')] opacity-[0.03] pointer-events-none z-0 mix-blend-overlay"></div>
       <div className="fixed top-[-20%] right-[-10%] w-[800px] h-[800px] bg-blue-600/10 blur-[120px] rounded-full pointer-events-none z-0"></div>
       <div className="fixed bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-cyan-600/10 blur-[100px] rounded-full pointer-events-none z-0"></div>
 

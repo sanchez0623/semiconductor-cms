@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRight, Cpu } from "lucide-react"
 import { motion } from "framer-motion"
+import Image from "next/image"
 
 interface ProductCardProps {
   title: string
@@ -29,9 +30,13 @@ export function ProductCard({ title, description, image, category, featured, ind
         <div className="relative h-48 overflow-hidden bg-slate-900">
            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent z-10 opacity-80" />
            {/* Placeholder image style */}
-           <div className="w-full h-full bg-[radial-gradient(circle_at_50%_50%,_#1e293b_0%,_#0f172a_100%)] group-hover:scale-105 transition-transform duration-700 flex items-center justify-center">
-              <img src={image} alt={title}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+           <div className="w-full h-full bg-[radial-gradient(circle_at_50%_50%,_#1e293b_0%,_#0f172a_100%)] group-hover:scale-105 transition-transform duration-700 flex items-center justify-center relative">
+              <Image 
+                src={image} 
+                alt={title}
+                fill
+                className="object-cover group-hover:scale-110 transition-transform duration-500"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
            </div>
            

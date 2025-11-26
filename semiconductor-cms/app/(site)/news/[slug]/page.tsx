@@ -4,6 +4,7 @@ import { getNewsBySlug, getNewsPaginated } from "@/lib/notion/notion-news";
 import { ArrowLeft, Calendar } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Metadata } from "next";
 
 // 1. 开启 ISR 增量静态再生，每 3600 秒（1小时）尝试更新一次缓存
 export const revalidate = 3600;
@@ -22,6 +23,24 @@ export async function generateStaticParams() {
   return items.map((item) => ({
     slug: item.slug,
   }));
+}
+
+// 4. 动态生成 SEO 元数据
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const item = await getNewsBySlug(slug);
+
+  if (!item) {
+    return {
+      title: "新闻未找到",
+    };
+  }
+
+  return {
+    title: `${item.title} - 新闻中心`,
+    description: item.content?.slice(0, 100) || "查看新闻详情",
+    keywords: ["半导体新闻", "行业动态", item.title],
+  };
 }
 
 interface NewsDetailPageProps {

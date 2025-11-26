@@ -1,6 +1,13 @@
 // app/(site)/news/page.tsx
 import { getAllNews } from "@/lib/notion/notion-news";
 import Link from "next/link";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "新闻中心 - Semiconductor CMS",
+  description: "获取最新的半导体行业动态、公司新闻和技术资讯。",
+  keywords: ["新闻中心", "行业动态", "技术资讯", "半导体新闻"],
+};
 
 export default async function NewsListPage() {
   const news = await getAllNews();
